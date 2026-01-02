@@ -12,7 +12,15 @@ MODULE_ID = "commissions"
 MODULE_NAME = _("Commissions")
 MODULE_ICON = "wallet-outline"
 MODULE_VERSION = "1.0.0"
-MODULE_CATEGORY = "operations"
+MODULE_CATEGORY = "sales"  # Changed from "operations" to valid category
+
+# Target Industries (business verticals this module is designed for)
+MODULE_INDUSTRIES = [
+    "retail",       # Retail stores
+    "salon",        # Beauty & wellness
+    "professional", # Professional services
+    "ecommerce",    # E-commerce
+]
 
 # Sidebar Menu Configuration
 MENU = {
