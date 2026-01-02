@@ -17,8 +17,8 @@ MODULE_CATEGORY = "sales"  # Changed from "operations" to valid category
 # Target Industries (business verticals this module is designed for)
 MODULE_INDUSTRIES = [
     "retail",       # Retail stores
-    "salon",        # Beauty & wellness
-    "professional", # Professional services
+    "beauty",       # Beauty & wellness
+    "consulting",   # Professional services
     "ecommerce",    # E-commerce
 ]
 
