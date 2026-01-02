@@ -1,0 +1,58 @@
+{% extends "ui/module_content.html" %}
+{% load i18n %}
+
+{% block tabbar %}
+    {% include "commissions/partials/tabbar.html" with active_tab="payouts" %}
+{% endblock %}
+
+{% block header_actions %}
+<ion-button href="/modules/commissions/payouts/create/">
+    <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+</ion-button>
+{% endblock %}
+
+{% block page_content %}
+<div class="p-md">
+    <!-- Filters -->
+    <div class="flex gap-sm mb-md">
+        <ion-chip {% if not status_filter %}color="primary"{% endif %}>
+            <a href="?status=">{% trans "All" %}</a>
+        </ion-chip>
+        <ion-chip {% if status_filter == 'pending' %}color="primary"{% endif %}>
+            <a href="?status=pending">{% trans "Pending" %}</a>
+        </ion-chip>
+        <ion-chip {% if status_filter == 'approved' %}color="primary"{% endif %}>
+            <a href="?status=approved">{% trans "Approved" %}</a>
+        </ion-chip>
+        <ion-chip {% if status_filter == 'paid' %}color="primary"{% endif %}>
+            <a href="?status=paid">{% trans "Paid" %}</a>
+        </ion-chip>
+    </div>
+
+    <!-- Payout List -->
+    <ion-list lines="full">
+        {% for payout in payouts %}
+        <ion-item href="/modules/commissions/payouts/{{ payout.id }}/" class="list-item-clickable">
+            <ion-label>
+                <h2>{{ payout.staff_member }}</h2>
+                <p>{{ payout.period_start }} - {{ payout.period_end }}</p>
+                <p class="text-secondary">{{ payout.transaction_count }} transactions</p>
+            </ion-label>
+            <div slot="end" class="text-right">
+                <div class="font-bold">${{ payout.total_amount }}</div>
+                <ion-badge color="{% if payout.status == 'approved' %}success{% elif payout.status == 'pending' %}warning{% elif payout.status == 'paid' %}primary{% else %}medium{% endif %}">
+                    {{ payout.status|title }}
+                </ion-badge>
+            </div>
+        </ion-item>
+        {% empty %}
+        <ion-item>
+            <ion-label class="text-center text-secondary py-lg">
+                <ion-icon name="wallet-outline" class="text-xl mb-sm"></ion-icon>
+                <p>{% trans "No payouts found" %}</p>
+            </ion-label>
+        </ion-item>
+        {% endfor %}
+    </ion-list>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "ui/app_base.html" %}
+{% load i18n %}
+
+{% block page_content %}
+<div class="p-md">
+    <ion-card class="card-form">
+        <ion-card-header>
+            <ion-card-title>{% trans "Create Payout" %}</ion-card-title>
+        </ion-card-header>
+        <form method="post">
+            {% csrf_token %}
+            <ion-card-content>
+                <ion-list lines="none">
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Staff Member" %} *</ion-label>
+                        <ion-select name="staff_member" interface="action-sheet" required>
+                            {% for staff in staff_list %}
+                            <ion-select-option value="{{ staff.id }}">{{ staff.first_name }} {{ staff.last_name }}</ion-select-option>
+                            {% endfor %}
+                        </ion-select>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Period Start" %} *</ion-label>
+                        <ion-input type="date" name="period_start" required></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Period End" %} *</ion-label>
+                        <ion-input type="date" name="period_end" required></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Notes" %}</ion-label>
+                        <ion-textarea name="notes" rows="3"></ion-textarea>
+                    </ion-item>
+                </ion-list>
+            </ion-card-content>
+
+            <div class="form-actions">
+                <ion-button type="submit" expand="block">
+                    <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+                    {% trans "Create Payout" %}
+                </ion-button>
+            </div>
+        </form>
+    </ion-card>
+</div>
+{% endblock %}

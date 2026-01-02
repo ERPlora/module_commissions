@@ -1,0 +1,85 @@
+{% extends "ui/module_content.html" %}
+{% load i18n %}
+
+{% block tabbar %}
+    {% include "commissions/partials/tabbar.html" with active_tab="settings" %}
+{% endblock %}
+
+{% block page_content %}
+<div class="p-md">
+    <form method="post">
+        {% csrf_token %}
+        <ion-card class="card-form">
+            <ion-card-header>
+                <ion-card-title>{% trans "Commission Settings" %}</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+                <ion-list lines="none">
+                    <ion-item>
+                        <ion-checkbox name="enabled" {% if config.enabled %}checked{% endif %}></ion-checkbox>
+                        <ion-label>{% trans "Enable Commissions" %}</ion-label>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Calculation Basis" %}</ion-label>
+                        <ion-select name="calculation_basis" value="{{ config.calculation_basis }}" interface="action-sheet">
+                            <ion-select-option value="gross">{% trans "Gross Sales" %}</ion-select-option>
+                            <ion-select-option value="net">{% trans "Net Sales (after discounts)" %}</ion-select-option>
+                            <ion-select-option value="profit">{% trans "Profit Margin" %}</ion-select-option>
+                        </ion-select>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Payout Frequency" %}</ion-label>
+                        <ion-select name="payout_frequency" value="{{ config.payout_frequency }}" interface="action-sheet">
+                            <ion-select-option value="weekly">{% trans "Weekly" %}</ion-select-option>
+                            <ion-select-option value="biweekly">{% trans "Bi-weekly" %}</ion-select-option>
+                            <ion-select-option value="monthly">{% trans "Monthly" %}</ion-select-option>
+                        </ion-select>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Default Commission Rate (%)" %}</ion-label>
+                        <ion-input type="number" name="default_commission_rate" value="{{ config.default_commission_rate }}" step="0.01" min="0" max="100"></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Minimum Payout ($)" %}</ion-label>
+                        <ion-input type="number" name="minimum_payout" value="{{ config.minimum_payout }}" step="0.01" min="0"></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Auto-approve Below ($)" %}</ion-label>
+                        <ion-input type="number" name="auto_approve_below" value="{{ config.auto_approve_below }}" step="0.01" min="0"></ion-input>
+                        <ion-note slot="helper">{% trans "Transactions below this amount are auto-approved" %}</ion-note>
+                    </ion-item>
+                </ion-list>
+            </ion-card-content>
+        </ion-card>
+
+        <ion-card class="card-form mt-md">
+            <ion-card-header>
+                <ion-card-title>{% trans "Tax Settings" %}</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+                <ion-list lines="none">
+                    <ion-item>
+                        <ion-checkbox name="tax_withholding_enabled" {% if config.tax_withholding_enabled %}checked{% endif %}></ion-checkbox>
+                        <ion-label>{% trans "Enable Tax Withholding" %}</ion-label>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Tax Withholding Rate (%)" %}</ion-label>
+                        <ion-input type="number" name="tax_withholding_rate" value="{{ config.tax_withholding_rate }}" step="0.01" min="0" max="100"></ion-input>
+                    </ion-item>
+                </ion-list>
+            </ion-card-content>
+        </ion-card>
+
+        <ion-button expand="block" type="submit" class="mt-md">
+            <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+            {% trans "Save Settings" %}
+        </ion-button>
+    </form>
+</div>
+{% endblock %}

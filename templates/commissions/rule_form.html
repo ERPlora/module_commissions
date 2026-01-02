@@ -1,0 +1,75 @@
+{% extends "ui/app_base.html" %}
+{% load i18n %}
+
+{% block page_content %}
+<div class="p-md">
+    <ion-card class="card-form">
+        <ion-card-header>
+            <ion-card-title>{% if rule %}{% trans "Edit Rule" %}{% else %}{% trans "New Rule" %}{% endif %}</ion-card-title>
+        </ion-card-header>
+        <form method="post">
+            {% csrf_token %}
+            <ion-card-content>
+                <ion-list lines="none">
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Name" %} *</ion-label>
+                        <ion-input name="name" value="{{ rule.name|default:'' }}" required></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Description" %}</ion-label>
+                        <ion-textarea name="description" rows="2">{{ rule.description|default:'' }}</ion-textarea>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Rule Type" %}</ion-label>
+                        <ion-select name="rule_type" value="{{ rule.rule_type|default:'percentage' }}" interface="action-sheet">
+                            <ion-select-option value="percentage">{% trans "Percentage" %}</ion-select-option>
+                            <ion-select-option value="flat">{% trans "Flat Amount" %}</ion-select-option>
+                            <ion-select-option value="tiered">{% trans "Tiered" %}</ion-select-option>
+                        </ion-select>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Rate (%)" %}</ion-label>
+                        <ion-input type="number" name="rate" value="{{ rule.rate|default:'0' }}" step="0.01" min="0" max="100"></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Flat Amount ($)" %}</ion-label>
+                        <ion-input type="number" name="flat_amount" value="{{ rule.flat_amount|default:'0' }}" step="0.01" min="0"></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Priority" %}</ion-label>
+                        <ion-input type="number" name="priority" value="{{ rule.priority|default:'0' }}" min="0"></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-checkbox name="is_active" {% if rule.is_active or not rule %}checked{% endif %}></ion-checkbox>
+                        <ion-label>{% trans "Active" %}</ion-label>
+                    </ion-item>
+                </ion-list>
+            </ion-card-content>
+
+            <div class="form-actions">
+                <ion-button type="submit" expand="block">
+                    <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+                    {% if rule %}{% trans "Save Changes" %}{% else %}{% trans "Create Rule" %}{% endif %}
+                </ion-button>
+            </div>
+        </form>
+    </ion-card>
+
+    {% if rule %}
+    <form method="post" action="{% url 'commissions:rule_delete' rule.id %}" class="mt-md">
+        {% csrf_token %}
+        <ion-button expand="block" color="danger" fill="outline" type="submit"
+                    onclick="return confirm('{% trans "Are you sure?" %}')">
+            <ion-icon slot="start" name="trash-outline"></ion-icon>
+            {% trans "Delete Rule" %}
+        </ion-button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

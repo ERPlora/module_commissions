@@ -1,0 +1,59 @@
+{% extends "ui/app_base.html" %}
+{% load i18n %}
+
+{% block page_content %}
+<div class="p-md">
+    <ion-card class="card-form">
+        <ion-card-header>
+            <ion-card-title>{% trans "New Adjustment" %}</ion-card-title>
+        </ion-card-header>
+        <form method="post">
+            {% csrf_token %}
+            <ion-card-content>
+                <ion-list lines="none">
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Staff Member" %} *</ion-label>
+                        <ion-select name="staff_member" interface="action-sheet" required>
+                            {% for staff in staff_list %}
+                            <ion-select-option value="{{ staff.id }}">{{ staff.first_name }} {{ staff.last_name }}</ion-select-option>
+                            {% endfor %}
+                        </ion-select>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Type" %}</ion-label>
+                        <ion-select name="adjustment_type" value="bonus" interface="action-sheet">
+                            <ion-select-option value="bonus">{% trans "Bonus" %}</ion-select-option>
+                            <ion-select-option value="correction">{% trans "Correction" %}</ion-select-option>
+                            <ion-select-option value="deduction">{% trans "Deduction" %}</ion-select-option>
+                            <ion-select-option value="advance">{% trans "Advance" %}</ion-select-option>
+                        </ion-select>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Amount ($)" %} *</ion-label>
+                        <ion-input type="number" name="amount" step="0.01" required placeholder="{% trans 'Use negative for deductions' %}"></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Effective Date" %}</ion-label>
+                        <ion-input type="date" name="effective_date"></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Reason" %}</ion-label>
+                        <ion-textarea name="reason" rows="3"></ion-textarea>
+                    </ion-item>
+                </ion-list>
+            </ion-card-content>
+
+            <div class="form-actions">
+                <ion-button type="submit" expand="block">
+                    <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+                    {% trans "Create Adjustment" %}
+                </ion-button>
+            </div>
+        </form>
+    </ion-card>
+</div>
+{% endblock %}

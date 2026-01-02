@@ -1,0 +1,59 @@
+{% extends "ui/module_content.html" %}
+{% load i18n %}
+
+{% block tabbar %}
+    {% include "commissions/partials/tabbar.html" with active_tab="transactions" %}
+{% endblock %}
+
+{% block header_actions %}
+<ion-button href="/modules/commissions/adjustments/create/">
+    <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+</ion-button>
+{% endblock %}
+
+{% block page_content %}
+<div class="p-md">
+    <!-- Filters -->
+    <div class="flex gap-sm mb-md">
+        <ion-chip {% if not status_filter %}color="primary"{% endif %}>
+            <a href="?status=">{% trans "All" %}</a>
+        </ion-chip>
+        <ion-chip {% if status_filter == 'pending' %}color="primary"{% endif %}>
+            <a href="?status=pending">{% trans "Pending" %}</a>
+        </ion-chip>
+        <ion-chip {% if status_filter == 'approved' %}color="primary"{% endif %}>
+            <a href="?status=approved">{% trans "Approved" %}</a>
+        </ion-chip>
+    </div>
+
+    <!-- Adjustment List -->
+    <ion-list lines="full">
+        {% for adj in adjustments %}
+        <ion-item href="/modules/commissions/adjustments/{{ adj.id }}/" class="list-item-clickable">
+            <ion-label>
+                <h2>{{ adj.staff_member }}</h2>
+                <p>{{ adj.get_adjustment_type_display }} - {{ adj.effective_date }}</p>
+                {% if adj.reason %}
+                <p class="text-secondary">{{ adj.reason|truncatewords:10 }}</p>
+                {% endif %}
+            </ion-label>
+            <div slot="end" class="text-right">
+                <div class="font-bold {% if adj.amount >= 0 %}text-success{% else %}text-danger{% endif %}">
+                    {% if adj.amount >= 0 %}+{% endif %}${{ adj.amount }}
+                </div>
+                <ion-badge color="{% if adj.status == 'approved' %}success{% elif adj.status == 'pending' %}warning{% else %}medium{% endif %}">
+                    {{ adj.status|title }}
+                </ion-badge>
+            </div>
+        </ion-item>
+        {% empty %}
+        <ion-item>
+            <ion-label class="text-center text-secondary py-lg">
+                <ion-icon name="add-circle-outline" class="text-xl mb-sm"></ion-icon>
+                <p>{% trans "No adjustments found" %}</p>
+            </ion-label>
+        </ion-item>
+        {% endfor %}
+    </ion-list>
+</div>
+{% endblock %}

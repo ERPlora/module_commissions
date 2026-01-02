@@ -1,0 +1,68 @@
+{% extends "ui/module_content.html" %}
+{% load i18n %}
+
+{% block tabbar %}
+    {% include "commissions/partials/tabbar.html" with active_tab="transactions" %}
+{% endblock %}
+
+{% block page_content %}
+<div class="p-md">
+    <ion-card>
+        <ion-card-header>
+            <ion-card-subtitle>{% trans "Adjustment" %} #{{ adjustment.id }}</ion-card-subtitle>
+            <ion-card-title>{{ adjustment.staff_member }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+            <ion-list lines="none">
+                <ion-item>
+                    <ion-label>{% trans "Type" %}</ion-label>
+                    <ion-note slot="end">{{ adjustment.get_adjustment_type_display }}</ion-note>
+                </ion-item>
+                <ion-item>
+                    <ion-label>{% trans "Amount" %}</ion-label>
+                    <ion-note slot="end" class="font-bold {% if adjustment.amount >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        {% if adjustment.amount >= 0 %}+{% endif %}${{ adjustment.amount }}
+                    </ion-note>
+                </ion-item>
+                <ion-item>
+                    <ion-label>{% trans "Effective Date" %}</ion-label>
+                    <ion-note slot="end">{{ adjustment.effective_date }}</ion-note>
+                </ion-item>
+                <ion-item>
+                    <ion-label>{% trans "Status" %}</ion-label>
+                    <ion-badge slot="end" color="{% if adjustment.status == 'approved' %}success{% elif adjustment.status == 'pending' %}warning{% else %}medium{% endif %}">
+                        {{ adjustment.status|title }}
+                    </ion-badge>
+                </ion-item>
+                {% if adjustment.reason %}
+                <ion-item>
+                    <ion-label class="ion-text-wrap">
+                        <p class="text-secondary">{% trans "Reason" %}</p>
+                        <p>{{ adjustment.reason }}</p>
+                    </ion-label>
+                </ion-item>
+                {% endif %}
+            </ion-list>
+        </ion-card-content>
+    </ion-card>
+
+    {% if adjustment.status == 'pending' %}
+    <div class="flex gap-md mt-md">
+        <form method="post" action="{% url 'commissions:adjustment_approve' adjustment.id %}" class="flex-1">
+            {% csrf_token %}
+            <ion-button expand="block" color="success" type="submit">
+                <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+                {% trans "Approve" %}
+            </ion-button>
+        </form>
+        <form method="post" action="{% url 'commissions:adjustment_reject' adjustment.id %}" class="flex-1">
+            {% csrf_token %}
+            <ion-button expand="block" color="danger" type="submit">
+                <ion-icon slot="start" name="close-outline"></ion-icon>
+                {% trans "Reject" %}
+            </ion-button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends "ui/module_content.html" %}
+{% load i18n %}
+
+{% block tabbar %}
+    {% include "commissions/partials/tabbar.html" with active_tab="payouts" %}
+{% endblock %}
+
+{% block page_content %}
+<div class="p-md">
+    <ion-card>
+        <ion-card-header>
+            <ion-card-subtitle>{% trans "Payout" %} #{{ payout.id }}</ion-card-subtitle>
+            <ion-card-title>{{ payout.staff_member }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+            <ion-list lines="none">
+                <ion-item>
+                    <ion-label>{% trans "Period" %}</ion-label>
+                    <ion-note slot="end">{{ payout.period_start }} - {{ payout.period_end }}</ion-note>
+                </ion-item>
+                <ion-item>
+                    <ion-label>{% trans "Total Amount" %}</ion-label>
+                    <ion-note slot="end" class="font-bold">${{ payout.total_amount }}</ion-note>
+                </ion-item>
+                <ion-item>
+                    <ion-label>{% trans "Tax Withheld" %}</ion-label>
+                    <ion-note slot="end">${{ payout.tax_withheld }}</ion-note>
+                </ion-item>
+                <ion-item>
+                    <ion-label>{% trans "Net Amount" %}</ion-label>
+                    <ion-note slot="end" class="font-bold text-success">${{ payout.net_amount }}</ion-note>
+                </ion-item>
+                <ion-item>
+                    <ion-label>{% trans "Transactions" %}</ion-label>
+                    <ion-note slot="end">{{ payout.transaction_count }}</ion-note>
+                </ion-item>
+                <ion-item>
+                    <ion-label>{% trans "Status" %}</ion-label>
+                    <ion-badge slot="end" color="{% if payout.status == 'approved' %}success{% elif payout.status == 'pending' %}warning{% elif payout.status == 'paid' %}primary{% else %}medium{% endif %}">
+                        {{ payout.status|title }}
+                    </ion-badge>
+                </ion-item>
+                {% if payout.paid_date %}
+                <ion-item>
+                    <ion-label>{% trans "Paid Date" %}</ion-label>
+                    <ion-note slot="end">{{ payout.paid_date }}</ion-note>
+                </ion-item>
+                {% endif %}
+                {% if payout.payment_method %}
+                <ion-item>
+                    <ion-label>{% trans "Payment Method" %}</ion-label>
+                    <ion-note slot="end">{{ payout.payment_method }}</ion-note>
+                </ion-item>
+                {% endif %}
+            </ion-list>
+        </ion-card-content>
+    </ion-card>
+
+    <!-- Transactions -->
+    {% if transactions %}
+    <ion-card class="mt-md">
+        <ion-card-header>
+            <ion-card-title>{% trans "Included Transactions" %}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content class="p-0">
+            <ion-list lines="full">
+                {% for trans in transactions %}
+                <ion-item>
+                    <ion-label>
+                        <p>{{ trans.transaction_date }} - {{ trans.transaction_type|title }}</p>
+                    </ion-label>
+                    <ion-note slot="end">${{ trans.net_amount }}</ion-note>
+                </ion-item>
+                {% endfor %}
+            </ion-list>
+        </ion-card-content>
+    </ion-card>
+    {% endif %}
+
+    <!-- Actions -->
+    {% if payout.status == 'pending' %}
+    <div class="flex gap-md mt-md">
+        <form method="post" action="{% url 'commissions:payout_approve' payout.id %}" class="flex-1">
+            {% csrf_token %}
+            <ion-button expand="block" color="success" type="submit">
+                <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+                {% trans "Approve" %}
+            </ion-button>
+        </form>
+        <form method="post" action="{% url 'commissions:payout_cancel' payout.id %}" class="flex-1">
+            {% csrf_token %}
+            <ion-button expand="block" color="danger" type="submit">
+                <ion-icon slot="start" name="close-outline"></ion-icon>
+                {% trans "Cancel" %}
+            </ion-button>
+        </form>
+    </div>
+    {% elif payout.status == 'approved' %}
+    <form method="post" action="{% url 'commissions:payout_process' payout.id %}" class="mt-md">
+        {% csrf_token %}
+        <ion-card>
+            <ion-card-content>
+                <ion-list lines="none">
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Payment Method" %}</ion-label>
+                        <ion-select name="payment_method" interface="action-sheet">
+                            <ion-select-option value="cash">{% trans "Cash" %}</ion-select-option>
+                            <ion-select-option value="bank_transfer">{% trans "Bank Transfer" %}</ion-select-option>
+                            <ion-select-option value="check">{% trans "Check" %}</ion-select-option>
+                        </ion-select>
+                    </ion-item>
+                    <ion-item>
+                        <ion-label position="stacked">{% trans "Reference" %}</ion-label>
+                        <ion-input name="reference" placeholder="{% trans 'Transaction ID, check number, etc.' %}"></ion-input>
+                    </ion-item>
+                </ion-list>
+            </ion-card-content>
+        </ion-card>
+        <ion-button expand="block" color="primary" type="submit" class="mt-md">
+            <ion-icon slot="start" name="cash-outline"></ion-icon>
+            {% trans "Mark as Paid" %}
+        </ion-button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}
