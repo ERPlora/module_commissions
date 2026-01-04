@@ -1,27 +1,27 @@
 {% load i18n %}
 <ion-tab-bar slot="bottom">
     <ion-tab-button href="/modules/commissions/" {% if active_tab == 'dashboard' %}class="tab-selected"{% endif %}>
-        <ion-icon name="stats-chart-outline"></ion-icon>
+        {% icon "stats-chart-outline" %}
         <ion-label>{% trans "Dashboard" %}</ion-label>
     </ion-tab-button>
 
     <ion-tab-button href="/modules/commissions/transactions/" {% if active_tab == 'transactions' %}class="tab-selected"{% endif %}>
-        <ion-icon name="receipt-outline"></ion-icon>
+        {% icon "receipt-outline" %}
         <ion-label>{% trans "Transactions" %}</ion-label>
     </ion-tab-button>
 
     <ion-tab-button href="/modules/commissions/payouts/" {% if active_tab == 'payouts' %}class="tab-selected"{% endif %}>
-        <ion-icon name="wallet-outline"></ion-icon>
+        {% icon "wallet-outline" %}
         <ion-label>{% trans "Payouts" %}</ion-label>
     </ion-tab-button>
 
     <ion-tab-button href="/modules/commissions/rules/" {% if active_tab == 'rules' %}class="tab-selected"{% endif %}>
-        <ion-icon name="options-outline"></ion-icon>
+        {% icon "options-outline" %}
         <ion-label>{% trans "Rules" %}</ion-label>
     </ion-tab-button>
 
     <ion-tab-button href="/modules/commissions/settings/" {% if active_tab == 'settings' %}class="tab-selected"{% endif %}>
-        <ion-icon name="settings-outline"></ion-icon>
+        {% icon "settings-outline" %}
         <ion-label>{% trans "Settings" %}</ion-label>
     </ion-tab-button>
 </ion-tab-bar>

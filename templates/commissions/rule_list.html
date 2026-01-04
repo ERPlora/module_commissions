@@ -7,7 +7,7 @@
 
 {% block header_actions %}
 <ion-button href="/modules/commissions/rules/create/">
-    <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+    {% icon "add-outline" %}
 </ion-button>
 {% endblock %}
 
@@ -35,7 +35,7 @@
         {% empty %}
         <ion-item>
             <ion-label class="text-center text-secondary py-lg">
-                <ion-icon name="options-outline" class="text-xl mb-sm"></ion-icon>
+                {% icon "options-outline" css_class="text-xl mb-sm" %}
                 <p>{% trans "No rules configured" %}</p>
                 <ion-button href="/modules/commissions/rules/create/" fill="clear">
                     {% trans "Create your first rule" %}

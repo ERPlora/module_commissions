@@ -12,7 +12,7 @@ MODULE_ID = "commissions"
 MODULE_NAME = _("Commissions")
 MODULE_ICON = "wallet-outline"
 MODULE_VERSION = "1.0.0"
-MODULE_CATEGORY = "sales"  # Changed from "operations" to valid category
+MODULE_CATEGORY = "sales"
 
 # Target Industries (business verticals this module is designed for)
 MODULE_INDUSTRIES = [
@@ -75,16 +75,43 @@ SETTINGS = {
     "include_refunds": True,
 }
 
-# Permissions
+# Permissions - tuple format (action_suffix, display_name)
 PERMISSIONS = [
-    "commissions.view_commission",
-    "commissions.add_commission",
-    "commissions.change_commission",
-    "commissions.delete_commission",
-    "commissions.view_payout",
-    "commissions.process_payout",
-    "commissions.view_rule",
-    "commissions.add_rule",
-    "commissions.change_rule",
-    "commissions.delete_rule",
+    ("view_commission", _("Can view commissions")),
+    ("add_commission", _("Can add commissions")),
+    ("change_commission", _("Can change commissions")),
+    ("delete_commission", _("Can delete commissions")),
+    ("view_transaction", _("Can view commission transactions")),
+    ("manage_transaction", _("Can manage commission transactions")),
+    ("view_payout", _("Can view payouts")),
+    ("process_payout", _("Can process payouts")),
+    ("view_rule", _("Can view commission rules")),
+    ("add_rule", _("Can add commission rules")),
+    ("change_rule", _("Can change commission rules")),
+    ("delete_rule", _("Can delete commission rules")),
+    ("view_settings", _("Can view settings")),
+    ("change_settings", _("Can change settings")),
 ]
+
+# Role-based permission assignments
+ROLE_PERMISSIONS = {
+    "admin": ["*"],  # All permissions
+    "manager": [
+        "view_commission",
+        "add_commission",
+        "change_commission",
+        "view_transaction",
+        "manage_transaction",
+        "view_payout",
+        "process_payout",
+        "view_rule",
+        "add_rule",
+        "change_rule",
+        "view_settings",
+    ],
+    "employee": [
+        "view_commission",
+        "view_transaction",
+        "view_payout",
+    ],
+}

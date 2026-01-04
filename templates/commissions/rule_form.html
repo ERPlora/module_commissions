@@ -54,7 +54,7 @@
 
             <div class="form-actions">
                 <ion-button type="submit" expand="block">
-                    <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+                    {% icon "checkmark-outline" %}
                     {% if rule %}{% trans "Save Changes" %}{% else %}{% trans "Create Rule" %}{% endif %}
                 </ion-button>
             </div>
@@ -66,7 +66,7 @@
         {% csrf_token %}
         <ion-button expand="block" color="danger" fill="outline" type="submit"
                     onclick="return confirm('{% trans "Are you sure?" %}')">
-            <ion-icon slot="start" name="trash-outline"></ion-icon>
+            {% icon "trash-outline" %}
             {% trans "Delete Rule" %}
         </ion-button>
     </form>

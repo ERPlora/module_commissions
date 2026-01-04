@@ -7,7 +7,7 @@
 
 {% block header_actions %}
 <ion-button href="/modules/commissions/adjustments/create/">
-    <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+    {% icon "add-outline" %}
 </ion-button>
 {% endblock %}
 
@@ -49,7 +49,7 @@
         {% empty %}
         <ion-item>
             <ion-label class="text-center text-secondary py-lg">
-                <ion-icon name="add-circle-outline" class="text-xl mb-sm"></ion-icon>
+                {% icon "add-circle-outline" css_class="text-xl mb-sm" %}
                 <p>{% trans "No adjustments found" %}</p>
             </ion-label>
         </ion-item>

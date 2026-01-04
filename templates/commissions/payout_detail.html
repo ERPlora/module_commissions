@@ -83,14 +83,14 @@
         <form method="post" action="{% url 'commissions:payout_approve' payout.id %}" class="flex-1">
             {% csrf_token %}
             <ion-button expand="block" color="success" type="submit">
-                <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+                {% icon "checkmark-outline" %}
                 {% trans "Approve" %}
             </ion-button>
         </form>
         <form method="post" action="{% url 'commissions:payout_cancel' payout.id %}" class="flex-1">
             {% csrf_token %}
             <ion-button expand="block" color="danger" type="submit">
-                <ion-icon slot="start" name="close-outline"></ion-icon>
+                {% icon "close-outline" %}
                 {% trans "Cancel" %}
             </ion-button>
         </form>
@@ -117,7 +117,7 @@
             </ion-card-content>
         </ion-card>
         <ion-button expand="block" color="primary" type="submit" class="mt-md">
-            <ion-icon slot="start" name="cash-outline"></ion-icon>
+            {% icon "cash-outline" %}
             {% trans "Mark as Paid" %}
         </ion-button>
     </form>

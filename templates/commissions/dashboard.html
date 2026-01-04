@@ -70,7 +70,7 @@
             </ion-card-content>
             <ion-button expand="block" fill="clear" href="/modules/commissions/transactions/">
                 {% trans "View All Transactions" %}
-                <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+                {% icon "arrow-forward-outline" %}
             </ion-button>
         </ion-card>
 
@@ -83,7 +83,7 @@
                 <ion-list lines="full">
                     {% for trans in pending_transactions %}
                     <ion-item href="/modules/commissions/transactions/{{ trans.id }}/" class="list-item-clickable">
-                        <ion-icon name="receipt-outline" slot="start" color="warning"></ion-icon>
+                        {% icon "receipt-outline" css_class="text-warning" %}
                         <ion-label>
                             <h3>{{ trans.staff_member }}</h3>
                             <p>${{ trans.commission_amount }}</p>
@@ -98,7 +98,7 @@
 
                     {% for payout in pending_payouts %}
                     <ion-item href="/modules/commissions/payouts/{{ payout.id }}/" class="list-item-clickable">
-                        <ion-icon name="wallet-outline" slot="start" color="warning"></ion-icon>
+                        {% icon "wallet-outline" css_class="text-warning" %}
                         <ion-label>
                             <h3>{{ payout.staff_member }} - Payout</h3>
                             <p>${{ payout.total_amount }}</p>

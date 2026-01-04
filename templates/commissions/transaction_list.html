@@ -7,7 +7,7 @@
 
 {% block header_actions %}
 <ion-button href="/modules/commissions/adjustments/create/">
-    <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+    {% icon "add-outline" %}
 </ion-button>
 {% endblock %}
 
@@ -48,7 +48,7 @@
         {% empty %}
         <ion-item>
             <ion-label class="text-center text-secondary py-lg">
-                <ion-icon name="receipt-outline" class="text-xl mb-sm"></ion-icon>
+                {% icon "receipt-outline" css_class="text-xl mb-sm" %}
                 <p>{% trans "No transactions found" %}</p>
             </ion-label>
         </ion-item>

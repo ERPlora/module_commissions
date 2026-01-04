@@ -7,7 +7,7 @@
 
 {% block header_actions %}
 <ion-button href="/modules/commissions/rules/{{ rule.id }}/edit/">
-    <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+    {% icon "create-outline" %}
 </ion-button>
 {% endblock %}
 
@@ -77,7 +77,7 @@
             </ion-button>
         </form>
         <ion-button href="/modules/commissions/rules/{{ rule.id }}/edit/" expand="block" class="flex-1">
-            <ion-icon slot="start" name="create-outline"></ion-icon>
+            {% icon "create-outline" %}
             {% trans "Edit" %}
         </ion-button>
     </div>
