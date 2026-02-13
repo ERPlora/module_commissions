@@ -1,1 +1,1 @@
-default_app_config = 'commissions.apps.CommissionsConfig'
+default_app_config = 'modules.commissions.apps.CommissionsConfig'

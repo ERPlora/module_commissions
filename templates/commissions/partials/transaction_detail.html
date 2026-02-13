@@ -1,0 +1,180 @@
+{% load i18n djicons %}
+
+<div class="p-4">
+    <!-- Back Button -->
+    <button type="button" class="btn btn-ghost mb-3"
+        hx-get="{% url 'commissions:transaction_list' %}"
+        hx-target="#main-content-area"
+        hx-push-url="true">
+        {% icon "arrow-back-outline" css_class="mr-1" %}
+        {% trans "Back to Transactions" %}
+    </button>
+
+    <!-- Header Card -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                        {% icon "receipt-outline" css_class="text-2xl text-primary" %}
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold">{{ transaction.staff_name }}</h2>
+                        <span class="text-muted">{{ transaction.transaction_date|date:"d/m/Y" }}{% if transaction.sale_reference %} &middot; {{ transaction.sale_reference }}{% endif %}</span>
+                    </div>
+                </div>
+                <span class="badge color-{% if transaction.status == 'approved' %}success{% elif transaction.status == 'pending' %}warning{% elif transaction.status == 'paid' %}primary{% elif transaction.status == 'cancelled' %}error{% else %}medium{% endif %}">
+                    {{ transaction.get_status_display }}
+                </span>
+            </div>
+        </div>
+        <div class="card-body">
+            {% if transaction.description %}
+            <p class="text-muted mb-4">{{ transaction.description }}</p>
+            {% endif %}
+
+            <!-- Amount Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="p-3 rounded-lg bg-base-100">
+                    <div class="text-xs text-muted uppercase font-semibold mb-1">{% trans "Sale Amount" %}</div>
+                    <div class="text-lg font-semibold">${{ transaction.sale_amount|floatformat:2 }}</div>
+                </div>
+                <div class="p-3 rounded-lg bg-base-100">
+                    <div class="text-xs text-muted uppercase font-semibold mb-1">{% trans "Rate" %}</div>
+                    <div class="text-lg font-semibold">{{ transaction.commission_rate }}%</div>
+                </div>
+                <div class="p-3 rounded-lg bg-base-100">
+                    <div class="text-xs text-muted uppercase font-semibold mb-1">{% trans "Commission" %}</div>
+                    <div class="text-lg font-semibold">${{ transaction.commission_amount|floatformat:2 }}</div>
+                </div>
+                <div class="p-3 rounded-lg bg-base-100">
+                    <div class="text-xs text-muted uppercase font-semibold mb-1">{% trans "Net Amount" %}</div>
+                    <div class="text-lg font-semibold text-success">${{ transaction.net_commission|floatformat:2 }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">{% trans "Details" %}</h3>
+        </div>
+        <div class="card-body p-0">
+            <div class="list">
+                {% if transaction.rule %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Rule" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ transaction.rule.name }}</div>
+                </div>
+                {% endif %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Tax Withheld" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">${{ transaction.tax_amount|floatformat:2 }}</div>
+                </div>
+                {% if transaction.approved_by %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Approved By" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ transaction.approved_by }}</div>
+                </div>
+                {% endif %}
+                {% if transaction.approved_at %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Approved At" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ transaction.approved_at|date:"d/m/Y H:i" }}</div>
+                </div>
+                {% endif %}
+                {% if transaction.payout %}
+                <div class="list-item list-item-clickable"
+                     hx-get="{% url 'commissions:payout_detail' transaction.payout.id %}"
+                     hx-target="#main-content-area"
+                     hx-push-url="true">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Payout" %}</div>
+                    </div>
+                    <div class="list-item-end">
+                        <span class="text-primary">{{ transaction.payout.reference }}</span>
+                        {% icon "chevron-forward-outline" css_class="text-muted ml-1" %}
+                    </div>
+                </div>
+                {% endif %}
+                {% if transaction.notes %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Notes" %}</div>
+                        <div class="list-item-note">{{ transaction.notes }}</div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Created" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ transaction.created_at|date:"d/m/Y H:i" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions for pending transactions -->
+    {% if transaction.status == 'pending' %}
+    <div class="grid grid-cols-2 gap-3">
+        <button type="button" class="btn color-success w-full"
+                onclick="approveTransaction('{{ transaction.id }}')">
+            {% icon "checkmark-outline" css_class="mr-1" %}
+            {% trans "Approve" %}
+        </button>
+        <button type="button" class="btn btn-outline color-error w-full"
+                onclick="rejectTransaction('{{ transaction.id }}')">
+            {% icon "close-outline" css_class="mr-1" %}
+            {% trans "Reject" %}
+        </button>
+    </div>
+
+    <script>
+    async function approveTransaction(id) {
+        if (!confirm('{% trans "Approve this commission transaction?" %}')) return;
+        try {
+            const response = await fetch('{% url "commissions:transaction_approve" transaction.id %}', {
+                method: 'POST',
+                headers: {'X-CSRFToken': '{{ csrf_token }}'}
+            });
+            const data = await response.json();
+            if (data.success) {
+                htmx.ajax('GET', '{% url "commissions:transaction_detail" transaction.id %}', {target: '#main-content-area', pushUrl: true});
+            } else {
+                alert(data.error || '{% trans "Error approving transaction" %}');
+            }
+        } catch (e) { console.error(e); }
+    }
+
+    async function rejectTransaction(id) {
+        const reason = prompt('{% trans "Reason for rejection (optional):" %}');
+        if (reason === null) return;
+        try {
+            const form = new FormData();
+            form.append('reason', reason);
+            const response = await fetch('{% url "commissions:transaction_reject" transaction.id %}', {
+                method: 'POST',
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                body: form
+            });
+            const data = await response.json();
+            if (data.success) {
+                htmx.ajax('GET', '{% url "commissions:transaction_detail" transaction.id %}', {target: '#main-content-area', pushUrl: true});
+            } else {
+                alert(data.error || '{% trans "Error rejecting transaction" %}');
+            }
+        } catch (e) { console.error(e); }
+    }
+    </script>
+    {% endif %}
+</div>

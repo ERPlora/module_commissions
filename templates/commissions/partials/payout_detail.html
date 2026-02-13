@@ -1,0 +1,277 @@
+{% load i18n djicons %}
+
+<div class="p-4">
+    <!-- Back Button -->
+    <button type="button" class="btn btn-ghost mb-3"
+        hx-get="{% url 'commissions:payout_list' %}"
+        hx-target="#main-content-area"
+        hx-push-url="true">
+        {% icon "arrow-back-outline" css_class="mr-1" %}
+        {% trans "Back to Payouts" %}
+    </button>
+
+    <!-- Header Card -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                        {% icon "cash-outline" css_class="text-2xl text-primary" %}
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold">{{ payout.staff_name }}</h2>
+                        <span class="font-mono text-muted">{{ payout.reference }}</span>
+                    </div>
+                </div>
+                <span class="badge color-{% if payout.status == 'completed' %}success{% elif payout.status == 'approved' %}primary{% elif payout.status == 'pending' %}warning{% elif payout.status == 'cancelled' %}error{% else %}medium{% endif %}">
+                    {{ payout.get_status_display }}
+                </span>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Amount Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="p-3 rounded-lg bg-base-100">
+                    <div class="text-xs text-muted uppercase font-semibold mb-1">{% trans "Gross Amount" %}</div>
+                    <div class="text-lg font-semibold">${{ payout.gross_amount|floatformat:2 }}</div>
+                </div>
+                <div class="p-3 rounded-lg bg-base-100">
+                    <div class="text-xs text-muted uppercase font-semibold mb-1">{% trans "Tax Withheld" %}</div>
+                    <div class="text-lg font-semibold">${{ payout.tax_amount|floatformat:2 }}</div>
+                </div>
+                <div class="p-3 rounded-lg bg-base-100">
+                    <div class="text-xs text-muted uppercase font-semibold mb-1">{% trans "Adjustments" %}</div>
+                    <div class="text-lg font-semibold {% if payout.adjustments_amount > 0 %}text-success{% elif payout.adjustments_amount < 0 %}text-error{% endif %}">
+                        {% if payout.adjustments_amount > 0 %}+{% endif %}${{ payout.adjustments_amount|floatformat:2 }}
+                    </div>
+                </div>
+                <div class="p-3 rounded-lg bg-base-100">
+                    <div class="text-xs text-muted uppercase font-semibold mb-1">{% trans "Net Amount" %}</div>
+                    <div class="text-lg font-semibold text-success">${{ payout.net_amount|floatformat:2 }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">{% trans "Details" %}</h3>
+        </div>
+        <div class="card-body p-0">
+            <div class="list">
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Period" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ payout.period_start|date:"d/m/Y" }} - {{ payout.period_end|date:"d/m/Y" }}</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Transactions" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ payout.transaction_count }}</div>
+                </div>
+                {% if payout.payment_method %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Payment Method" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ payout.get_payment_method_display }}</div>
+                </div>
+                {% endif %}
+                {% if payout.payment_reference %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Payment Reference" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ payout.payment_reference }}</div>
+                </div>
+                {% endif %}
+                {% if payout.approved_by %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Approved By" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ payout.approved_by }} &middot; {{ payout.approved_at|date:"d/m/Y H:i" }}</div>
+                </div>
+                {% endif %}
+                {% if payout.paid_by %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Paid By" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ payout.paid_by }} &middot; {{ payout.paid_at|date:"d/m/Y H:i" }}</div>
+                </div>
+                {% endif %}
+                {% if payout.notes %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Notes" %}</div>
+                        <div class="list-item-note">{{ payout.notes }}</div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Included Transactions -->
+    {% if transactions %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">{% icon "receipt-outline" css_class="text-primary" %} {% trans "Included Transactions" %}</h3>
+            <span class="text-sm opacity-60">{{ transactions|length }} {% trans "transactions" %}</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="list">
+                {% for trans in transactions %}
+                <a hx-get="{% url 'commissions:transaction_detail' trans.id %}"
+                   hx-target="#main-content-area"
+                   hx-push-url="true"
+                   class="list-item list-item-clickable">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{{ trans.transaction_date|date:"d/m/Y" }}{% if trans.rule %} &middot; {{ trans.rule.name }}{% endif %}</div>
+                        <div class="list-item-note">{% trans "Sale" %}: ${{ trans.sale_amount|floatformat:2 }} @ {{ trans.commission_rate }}%</div>
+                    </div>
+                    <div class="list-item-end text-right">
+                        <div class="font-semibold">${{ trans.net_commission|floatformat:2 }}</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Adjustments -->
+    {% if adjustments %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">{% icon "swap-horizontal-outline" css_class="text-warning" %} {% trans "Adjustments" %}</h3>
+        </div>
+        <div class="card-body p-0">
+            <div class="list">
+                {% for adj in adjustments %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{{ adj.get_adjustment_type_display }}</div>
+                        <div class="list-item-note">{{ adj.reason|truncatewords:15 }}</div>
+                    </div>
+                    <div class="list-item-end">
+                        <span class="font-semibold {% if adj.amount >= 0 %}text-success{% else %}text-error{% endif %}">
+                            {% if adj.amount >= 0 %}+{% endif %}${{ adj.amount|floatformat:2 }}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    {% if payout.status == 'pending' %}
+    <div class="grid grid-cols-2 gap-3 mb-4">
+        <button type="button" class="btn color-success w-full"
+                onclick="approvePayout()">
+            {% icon "checkmark-outline" css_class="mr-1" %}
+            {% trans "Approve" %}
+        </button>
+        <button type="button" class="btn btn-outline color-error w-full"
+                onclick="cancelPayout()">
+            {% icon "close-outline" css_class="mr-1" %}
+            {% trans "Cancel" %}
+        </button>
+    </div>
+    {% elif payout.status == 'approved' %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">{% icon "cash-outline" css_class="text-success" %} {% trans "Process Payment" %}</h3>
+        </div>
+        <div class="card-body">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="form-group-label mb-1">{% trans "Payment Method" %}</label>
+                    <select id="payment-method" class="select">
+                        <option value="cash">{% trans "Cash" %}</option>
+                        <option value="bank_transfer">{% trans "Bank Transfer" %}</option>
+                        <option value="check">{% trans "Check" %}</option>
+                        <option value="payroll">{% trans "Added to Payroll" %}</option>
+                        <option value="other">{% trans "Other" %}</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-group-label mb-1">{% trans "Payment Reference" %}</label>
+                    <input type="text" id="payment-reference" class="input" placeholder="{% trans 'Transaction ID, check number, etc.' %}">
+                </div>
+            </div>
+            <button type="button" class="btn color-primary w-full"
+                    onclick="processPayout()">
+                {% icon "cash-outline" css_class="mr-1" %}
+                {% trans "Mark as Paid" %}
+            </button>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if payout.status == 'pending' or payout.status == 'approved' %}
+<script>
+async function approvePayout() {
+    if (!confirm('{% trans "Approve this payout?" %}')) return;
+    try {
+        const response = await fetch('{% url "commissions:payout_approve" payout.id %}', {
+            method: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}'}
+        });
+        const data = await response.json();
+        if (data.success) {
+            htmx.ajax('GET', '{% url "commissions:payout_detail" payout.id %}', {target: '#main-content-area', pushUrl: true});
+        } else {
+            alert(data.error || '{% trans "Error approving payout" %}');
+        }
+    } catch (e) { console.error(e); }
+}
+
+async function cancelPayout() {
+    const reason = prompt('{% trans "Reason for cancellation (optional):" %}');
+    if (reason === null) return;
+    try {
+        const form = new FormData();
+        form.append('reason', reason);
+        const response = await fetch('{% url "commissions:payout_cancel" payout.id %}', {
+            method: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            body: form
+        });
+        const data = await response.json();
+        if (data.success) {
+            htmx.ajax('GET', '{% url "commissions:payout_detail" payout.id %}', {target: '#main-content-area', pushUrl: true});
+        } else {
+            alert(data.error || '{% trans "Error cancelling payout" %}');
+        }
+    } catch (e) { console.error(e); }
+}
+
+async function processPayout() {
+    if (!confirm('{% trans "Mark this payout as paid?" %}')) return;
+    try {
+        const form = new FormData();
+        form.append('payment_method', document.getElementById('payment-method').value);
+        form.append('payment_reference', document.getElementById('payment-reference').value);
+        const response = await fetch('{% url "commissions:payout_process" payout.id %}', {
+            method: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            body: form
+        });
+        const data = await response.json();
+        if (data.success) {
+            htmx.ajax('GET', '{% url "commissions:payout_detail" payout.id %}', {target: '#main-content-area', pushUrl: true});
+        } else {
+            alert(data.error || '{% trans "Error processing payout" %}');
+        }
+    } catch (e) { console.error(e); }
+}
+</script>
+{% endif %}

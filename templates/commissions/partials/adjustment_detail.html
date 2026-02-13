@@ -1,0 +1,137 @@
+{% load i18n djicons %}
+
+<div class="p-4">
+    <!-- Back Button -->
+    <button type="button" class="btn btn-ghost mb-3"
+        hx-get="{% url 'commissions:adjustment_list' %}"
+        hx-target="#main-content-area"
+        hx-push-url="true">
+        {% icon "arrow-back-outline" css_class="mr-1" %}
+        {% trans "Back to Adjustments" %}
+    </button>
+
+    <!-- Header Card -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-{% if adjustment.amount >= 0 %}success{% else %}error{% endif %}/10 rounded-xl flex items-center justify-center">
+                        {% if adjustment.amount >= 0 %}
+                            {% icon "arrow-up-outline" css_class="text-2xl text-success" %}
+                        {% else %}
+                            {% icon "arrow-down-outline" css_class="text-2xl text-error" %}
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold">{{ adjustment.staff_name }}</h2>
+                        <span class="text-muted">{{ adjustment.get_adjustment_type_display }} &middot; {{ adjustment.adjustment_date|date:"d/m/Y" }}</span>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-2xl font-bold {% if adjustment.amount >= 0 %}text-success{% else %}text-error{% endif %}">
+                        {% if adjustment.amount >= 0 %}+{% endif %}${{ adjustment.amount|floatformat:2 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">{% trans "Details" %}</h3>
+        </div>
+        <div class="card-body p-0">
+            <div class="list">
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Type" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ adjustment.get_adjustment_type_display }}</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Date" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ adjustment.adjustment_date|date:"d/m/Y" }}</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Reason" %}</div>
+                        <div class="list-item-note">{{ adjustment.reason }}</div>
+                    </div>
+                </div>
+                {% if adjustment.created_by %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Created By" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ adjustment.created_by }}</div>
+                </div>
+                {% endif %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Created" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ adjustment.created_at|date:"d/m/Y H:i" }}</div>
+                </div>
+                {% if adjustment.payout %}
+                <div class="list-item list-item-clickable"
+                     hx-get="{% url 'commissions:payout_detail' adjustment.payout.id %}"
+                     hx-target="#main-content-area"
+                     hx-push-url="true">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Linked Payout" %}</div>
+                    </div>
+                    <div class="list-item-end">
+                        <span class="text-primary">{{ adjustment.payout.reference }}</span>
+                        {% icon "chevron-forward-outline" css_class="text-muted ml-1" %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Danger Zone -->
+    {% if not adjustment.payout %}
+    <div class="card" style="border-color: var(--color-error)">
+        <div class="card-header">
+            <h3 class="card-title text-error">{% trans "Danger Zone" %}</h3>
+        </div>
+        <div class="card-body">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h4 class="font-semibold">{% trans "Delete Adjustment" %}</h4>
+                    <p class="text-sm text-muted">{% trans "This action cannot be undone" %}</p>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline color-error"
+                        onclick="deleteAdjustment()">
+                    {% icon "trash-outline" css_class="mr-1" %}
+                    {% trans "Delete" %}
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if not adjustment.payout %}
+<script>
+async function deleteAdjustment() {
+    if (!confirm('{% trans "Are you sure you want to delete this adjustment?" %}')) return;
+    try {
+        const response = await fetch('{% url "commissions:adjustment_delete" adjustment.id %}', {
+            method: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}'}
+        });
+        const data = await response.json();
+        if (data.success) {
+            htmx.ajax('GET', '{% url "commissions:adjustment_list" %}', {target: '#main-content-area', pushUrl: true});
+        } else {
+            alert(data.error || '{% trans "Error deleting adjustment" %}');
+        }
+    } catch (e) { console.error(e); }
+}
+</script>
+{% endif %}

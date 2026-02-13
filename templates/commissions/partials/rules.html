@@ -1,0 +1,132 @@
+{% load i18n djicons %}
+
+<div class="p-4">
+    <!-- Page Header -->
+    <div class="flex justify-between items-center mb-4">
+        <div>
+            <h1 class="text-2xl font-bold">{% trans "Commission Rules" %}</h1>
+            <p class="text-sm text-muted mt-1">{% trans "Define how commissions are calculated" %}</p>
+        </div>
+        <button type="button" class="btn color-primary"
+                onclick="document.getElementById('add-rule-card').classList.toggle('hidden')">
+            {% icon "add-outline" css_class="mr-1" %}
+            {% trans "New Rule" %}
+        </button>
+    </div>
+
+    <!-- Add Rule Form (hidden by default) -->
+    <div id="add-rule-card" class="card mb-4 hidden">
+        <div class="card-header">
+            <h3 class="card-title">{% icon "add-circle-outline" css_class="text-primary" %} {% trans "Create Rule" %}</h3>
+        </div>
+        <div class="card-body">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="form-group-label mb-1">{% trans "Rule Name" %}</label>
+                    <input type="text" id="rule-name" class="input" placeholder="{% trans 'e.g. Standard Commission' %}">
+                </div>
+                <div>
+                    <label class="form-group-label mb-1">{% trans "Type" %}</label>
+                    <select id="rule-type" class="select">
+                        <option value="percentage">{% trans "Percentage" %}</option>
+                        <option value="flat">{% trans "Flat Amount" %}</option>
+                        <option value="tiered">{% trans "Tiered" %}</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-group-label mb-1">{% trans "Rate / Amount" %}</label>
+                    <input type="number" id="rule-rate" class="input" step="0.01" min="0" placeholder="10.00">
+                </div>
+                <div>
+                    <label class="form-group-label mb-1">{% trans "Priority" %}</label>
+                    <input type="number" id="rule-priority" class="input" min="0" value="0">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-group-label mb-1">{% trans "Description" %}</label>
+                <textarea id="rule-description" class="textarea" rows="2"></textarea>
+            </div>
+            <div class="flex gap-2">
+                <button type="button" class="btn color-primary" onclick="createRule()">
+                    {% icon "checkmark-outline" css_class="mr-1" %}
+                    {% trans "Create" %}
+                </button>
+                <button type="button" class="btn btn-ghost"
+                        onclick="document.getElementById('add-rule-card').classList.add('hidden')">
+                    {% trans "Cancel" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rules List -->
+    <div class="card">
+        <div class="card-body p-0">
+            {% if rules %}
+            <div class="list">
+                {% for rule in rules %}
+                <a hx-get="{% url 'commissions:rule_detail' rule.id %}"
+                   hx-target="#main-content-area"
+                   hx-push-url="true"
+                   class="list-item list-item-clickable">
+                    <div class="list-item-start">
+                        <div class="w-10 h-10 rounded-lg bg-{% if rule.is_active %}primary{% else %}gray{% endif %}/10 flex items-center justify-center">
+                            {% icon "options-outline" css_class="text-xl text-{% if rule.is_active %}primary{% else %}muted{% endif %}" %}
+                        </div>
+                    </div>
+                    <div class="list-item-content">
+                        <div class="list-item-label">{{ rule.name }}</div>
+                        <div class="list-item-note">
+                            {{ rule.get_rule_type_display }}:
+                            {% if rule.rule_type == 'flat' %}${{ rule.rate|floatformat:2 }}{% else %}{{ rule.rate }}%{% endif %}
+                            {% if rule.staff %}&middot; {{ rule.staff }}{% endif %}
+                            {% if rule.service %}&middot; {{ rule.service }}{% endif %}
+                            {% if rule.category %}&middot; {{ rule.category }}{% endif %}
+                        </div>
+                    </div>
+                    <div class="list-item-end">
+                        <span class="badge badge-sm color-{% if rule.is_active %}success{% else %}medium{% endif %}">
+                            {% if rule.is_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}
+                        </span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12 text-muted">
+                {% icon "options-outline" css_class="text-5xl block mx-auto mb-2" %}
+                <p class="mt-2">{% trans "No rules configured" %}</p>
+                <button type="button" class="btn btn-sm color-primary mt-3"
+                        onclick="document.getElementById('add-rule-card').classList.remove('hidden')">
+                    {% trans "Create your first rule" %}
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+async function createRule() {
+    const form = new FormData();
+    form.append('name', document.getElementById('rule-name').value);
+    form.append('rule_type', document.getElementById('rule-type').value);
+    form.append('rate', document.getElementById('rule-rate').value);
+    form.append('priority', document.getElementById('rule-priority').value);
+    form.append('description', document.getElementById('rule-description').value);
+    form.append('is_active', 'true');
+    try {
+        const response = await fetch('{% url "commissions:rule_add" %}', {
+            method: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            body: form
+        });
+        const data = await response.json();
+        if (data.success) {
+            htmx.ajax('GET', '{% url "commissions:rule_list" %}', {target: '#main-content-area', pushUrl: true});
+        } else {
+            alert(JSON.stringify(data.errors) || '{% trans "Error creating rule" %}');
+        }
+    } catch (e) { console.error(e); }
+}
+</script>

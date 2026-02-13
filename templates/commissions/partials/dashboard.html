@@ -1,0 +1,174 @@
+{% load i18n djicons %}
+
+<div class="p-4">
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+        <div class="card">
+            <div class="card-body flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                    {% icon "wallet-outline" css_class="text-xl text-primary" %}
+                </div>
+                <div>
+                    <div class="text-2xl font-bold">${{ stats.total_commission|floatformat:2 }}</div>
+                    <div class="text-xs text-muted">{% trans "Total Commission" %}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
+                    {% icon "cash-outline" css_class="text-xl text-success" %}
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-success">${{ stats.total_net|floatformat:2 }}</div>
+                    <div class="text-xs text-muted">{% trans "Net Amount" %}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center">
+                    {% icon "remove-circle-outline" css_class="text-xl text-warning" %}
+                </div>
+                <div>
+                    <div class="text-2xl font-bold">${{ stats.total_tax|floatformat:2 }}</div>
+                    <div class="text-xs text-muted">{% trans "Tax Withheld" %}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-error/10 flex items-center justify-center">
+                    {% icon "time-outline" css_class="text-xl text-error" %}
+                </div>
+                <div>
+                    <div class="text-2xl font-bold">{{ stats.pending_transactions }}</div>
+                    <div class="text-xs text-muted">{% trans "Pending Approval" %}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Top Earners -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">{% icon "trophy-outline" css_class="text-warning" %} {% trans "Top Earners" %}</h3>
+                <span class="text-sm opacity-60">{% trans "This month" %}</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="list">
+                    {% for earner in top_earners %}
+                    <div class="list-item">
+                        <div class="list-item-start">
+                            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary">
+                                {{ forloop.counter }}
+                            </div>
+                        </div>
+                        <div class="list-item-content">
+                            <div class="list-item-label">{{ earner.staff_name }}</div>
+                        </div>
+                        <div class="list-item-end">
+                            <span class="font-semibold text-success">${{ earner.total|floatformat:2 }}</span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-8 text-muted">
+                        {% icon "trophy-outline" css_class="text-3xl block mx-auto mb-2" %}
+                        <p>{% trans "No commission data this month" %}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">{% icon "receipt-outline" css_class="text-primary" %} {% trans "Recent Transactions" %}</h3>
+            </div>
+            <div class="card-body p-0">
+                <div class="list">
+                    {% for trans in recent_transactions %}
+                    <a hx-get="{% url 'commissions:transaction_detail' trans.id %}"
+                       hx-target="#main-content-area"
+                       hx-push-url="true"
+                       class="list-item list-item-clickable">
+                        <div class="list-item-content">
+                            <div class="list-item-label">{{ trans.staff_name }}</div>
+                            <div class="list-item-note">
+                                {% if trans.rule %}{{ trans.rule.name }} &middot; {% endif %}{{ trans.transaction_date|date:"d/m/Y" }}
+                            </div>
+                        </div>
+                        <div class="list-item-end text-right">
+                            <div class="font-semibold">${{ trans.commission_amount|floatformat:2 }}</div>
+                            <span class="badge badge-sm color-{% if trans.status == 'approved' %}success{% elif trans.status == 'pending' %}warning{% elif trans.status == 'paid' %}primary{% elif trans.status == 'cancelled' %}error{% else %}medium{% endif %}">
+                                {{ trans.get_status_display }}
+                            </span>
+                        </div>
+                    </a>
+                    {% empty %}
+                    <div class="text-center py-8 text-muted">
+                        {% icon "receipt-outline" css_class="text-3xl block mx-auto mb-2" %}
+                        <p>{% trans "No recent transactions" %}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="card__footer">
+                <button type="button" class="btn btn-ghost w-full"
+                    hx-get="{% url 'commissions:transaction_list' %}"
+                    hx-target="#main-content-area"
+                    hx-push-url="true">
+                    {% trans "View All Transactions" %}
+                    {% icon "arrow-forward-outline" css_class="ml-1" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Payouts -->
+    {% if pending_payouts %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3 class="card-title">{% icon "alert-circle-outline" css_class="text-warning" %} {% trans "Pending Payouts" %}</h3>
+        </div>
+        <div class="card-body p-0">
+            <div class="list">
+                {% for payout in pending_payouts %}
+                <a hx-get="{% url 'commissions:payout_detail' payout.id %}"
+                   hx-target="#main-content-area"
+                   hx-push-url="true"
+                   class="list-item list-item-clickable">
+                    <div class="list-item-start">
+                        <div class="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center">
+                            {% icon "cash-outline" css_class="text-xl text-warning" %}
+                        </div>
+                    </div>
+                    <div class="list-item-content">
+                        <div class="list-item-label">{{ payout.staff_name }}</div>
+                        <div class="list-item-note">{{ payout.reference }} &middot; {{ payout.period_start|date:"d/m" }} - {{ payout.period_end|date:"d/m/Y" }}</div>
+                    </div>
+                    <div class="list-item-end text-right">
+                        <div class="font-semibold">${{ payout.net_amount|floatformat:2 }}</div>
+                        <span class="badge badge-sm color-warning">{{ payout.get_status_display }}</span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="card__footer">
+            <button type="button" class="btn btn-ghost w-full"
+                hx-get="{% url 'commissions:payout_list' %}?status=pending"
+                hx-target="#main-content-area"
+                hx-push-url="true">
+                {% trans "View All Payouts" %}
+                {% icon "arrow-forward-outline" css_class="ml-1" %}
+            </button>
+        </div>
+    </div>
+    {% endif %}
+</div>

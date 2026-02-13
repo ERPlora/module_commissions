@@ -1,0 +1,88 @@
+{% load i18n djicons %}
+
+<div class="p-4">
+    <!-- Page Header -->
+    <div class="flex justify-between items-center mb-4">
+        <div>
+            <h1 class="text-2xl font-bold">{% trans "Transactions" %}</h1>
+            <p class="text-sm text-muted mt-1">{% trans "Commission transactions for all staff" %}</p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="input-group">
+                    <span class="input-group__icon">
+                        {% icon "search-outline" %}
+                    </span>
+                    <input type="text" name="q" value="{{ search }}"
+                        placeholder="{% trans 'Search by staff, reference...' %}"
+                        class="input"
+                        hx-get="{% url 'commissions:transaction_list' %}"
+                        hx-trigger="keyup changed delay:400ms"
+                        hx-target="#main-content-area"
+                        hx-include="[name='status']"
+                        hx-push-url="true">
+                </div>
+
+                <select name="status" class="select"
+                    hx-get="{% url 'commissions:transaction_list' %}"
+                    hx-trigger="change"
+                    hx-target="#main-content-area"
+                    hx-include="[name='q']"
+                    hx-push-url="true">
+                    <option value="">{% trans "All status" %}</option>
+                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>{% trans "Pending" %}</option>
+                    <option value="approved" {% if status_filter == 'approved' %}selected{% endif %}>{% trans "Approved" %}</option>
+                    <option value="paid" {% if status_filter == 'paid' %}selected{% endif %}>{% trans "Paid" %}</option>
+                    <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>{% trans "Cancelled" %}</option>
+                </select>
+
+                <div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction List -->
+    <div class="card">
+        <div class="card-body p-0">
+            {% if transactions %}
+            <div class="list">
+                {% for trans in transactions %}
+                <a hx-get="{% url 'commissions:transaction_detail' trans.id %}"
+                   hx-target="#main-content-area"
+                   hx-push-url="true"
+                   class="list-item list-item-clickable">
+                    <div class="list-item-start">
+                        <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                            {% icon "receipt-outline" css_class="text-xl text-primary" %}
+                        </div>
+                    </div>
+                    <div class="list-item-content">
+                        <div class="list-item-label">{{ trans.staff_name }}</div>
+                        <div class="list-item-note">
+                            {% if trans.rule %}{{ trans.rule.name }} &middot; {% endif %}{{ trans.transaction_date|date:"d/m/Y" }}
+                            {% if trans.sale_reference %} &middot; {{ trans.sale_reference }}{% endif %}
+                        </div>
+                    </div>
+                    <div class="list-item-end text-right">
+                        <div class="font-semibold">${{ trans.commission_amount|floatformat:2 }}</div>
+                        <span class="badge badge-sm color-{% if trans.status == 'approved' %}success{% elif trans.status == 'pending' %}warning{% elif trans.status == 'paid' %}primary{% elif trans.status == 'cancelled' %}error{% else %}medium{% endif %}">
+                            {{ trans.get_status_display }}
+                        </span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12 text-muted">
+                {% icon "receipt-outline" css_class="text-5xl block mx-auto mb-2" %}
+                <p class="mt-2">{% trans "No transactions found" %}</p>
+                <p class="text-sm">{% trans "Commission transactions will appear here as sales are processed" %}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

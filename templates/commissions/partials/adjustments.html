@@ -1,0 +1,155 @@
+{% load i18n djicons %}
+
+<div class="p-4">
+    <!-- Page Header -->
+    <div class="flex justify-between items-center mb-4">
+        <div>
+            <h1 class="text-2xl font-bold">{% trans "Adjustments" %}</h1>
+            <p class="text-sm text-muted mt-1">{% trans "Manual commission adjustments, bonuses, and corrections" %}</p>
+        </div>
+        <button type="button" class="btn color-primary"
+                onclick="document.getElementById('add-adj-card').classList.toggle('hidden')">
+            {% icon "add-outline" css_class="mr-1" %}
+            {% trans "New Adjustment" %}
+        </button>
+    </div>
+
+    <!-- Add Adjustment Form (hidden by default) -->
+    <div id="add-adj-card" class="card mb-4 hidden">
+        <div class="card-header">
+            <h3 class="card-title">{% icon "add-circle-outline" css_class="text-primary" %} {% trans "Create Adjustment" %}</h3>
+        </div>
+        <div class="card-body">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="form-group-label mb-1">{% trans "Staff Member" %}</label>
+                    <input type="text" id="adj-staff-id" class="input" placeholder="{% trans 'Staff ID' %}">
+                </div>
+                <div>
+                    <label class="form-group-label mb-1">{% trans "Type" %}</label>
+                    <select id="adj-type" class="select">
+                        <option value="bonus">{% trans "Bonus" %}</option>
+                        <option value="correction">{% trans "Correction" %}</option>
+                        <option value="deduction">{% trans "Deduction" %}</option>
+                        <option value="refund_adjustment">{% trans "Refund Adjustment" %}</option>
+                        <option value="other">{% trans "Other" %}</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-group-label mb-1">{% trans "Amount" %}</label>
+                    <input type="number" id="adj-amount" class="input" step="0.01" placeholder="0.00">
+                    <span class="text-xs text-muted">{% trans "Positive for additions, negative for deductions" %}</span>
+                </div>
+                <div>
+                    <label class="form-group-label mb-1">{% trans "Date" %}</label>
+                    <input type="date" id="adj-date" class="input">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-group-label mb-1">{% trans "Reason" %}</label>
+                <textarea id="adj-reason" class="textarea" rows="2" placeholder="{% trans 'Explain the reason for this adjustment' %}"></textarea>
+            </div>
+            <div class="flex gap-2">
+                <button type="button" class="btn color-primary" onclick="createAdjustment()">
+                    {% icon "checkmark-outline" css_class="mr-1" %}
+                    {% trans "Create" %}
+                </button>
+                <button type="button" class="btn btn-ghost"
+                        onclick="document.getElementById('add-adj-card').classList.add('hidden')">
+                    {% trans "Cancel" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <select name="type" class="select"
+                hx-get="{% url 'commissions:adjustment_list' %}"
+                hx-trigger="change"
+                hx-target="#main-content-area"
+                hx-push-url="true">
+                <option value="">{% trans "All types" %}</option>
+                <option value="bonus" {% if type_filter == 'bonus' %}selected{% endif %}>{% trans "Bonus" %}</option>
+                <option value="correction" {% if type_filter == 'correction' %}selected{% endif %}>{% trans "Correction" %}</option>
+                <option value="deduction" {% if type_filter == 'deduction' %}selected{% endif %}>{% trans "Deduction" %}</option>
+                <option value="refund_adjustment" {% if type_filter == 'refund_adjustment' %}selected{% endif %}>{% trans "Refund Adjustment" %}</option>
+                <option value="other" {% if type_filter == 'other' %}selected{% endif %}>{% trans "Other" %}</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Adjustments List -->
+    <div class="card">
+        <div class="card-body p-0">
+            {% if adjustments %}
+            <div class="list">
+                {% for adj in adjustments %}
+                <a hx-get="{% url 'commissions:adjustment_detail' adj.id %}"
+                   hx-target="#main-content-area"
+                   hx-push-url="true"
+                   class="list-item list-item-clickable">
+                    <div class="list-item-start">
+                        <div class="w-10 h-10 rounded-lg bg-{% if adj.amount >= 0 %}success{% else %}error{% endif %}/10 flex items-center justify-center">
+                            {% if adj.amount >= 0 %}
+                                {% icon "arrow-up-outline" css_class="text-xl text-success" %}
+                            {% else %}
+                                {% icon "arrow-down-outline" css_class="text-xl text-error" %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="list-item-content">
+                        <div class="list-item-label">{{ adj.staff_name }}</div>
+                        <div class="list-item-note">
+                            {{ adj.get_adjustment_type_display }} &middot; {{ adj.adjustment_date|date:"d/m/Y" }}
+                        </div>
+                    </div>
+                    <div class="list-item-end text-right">
+                        <div class="font-semibold {% if adj.amount >= 0 %}text-success{% else %}text-error{% endif %}">
+                            {% if adj.amount >= 0 %}+{% endif %}${{ adj.amount|floatformat:2 }}
+                        </div>
+                        {% if adj.payout %}
+                        <span class="badge badge-sm color-primary">{% trans "In Payout" %}</span>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12 text-muted">
+                {% icon "swap-horizontal-outline" css_class="text-5xl block mx-auto mb-2" %}
+                <p class="mt-2">{% trans "No adjustments found" %}</p>
+                <button type="button" class="btn btn-sm color-primary mt-3"
+                        onclick="document.getElementById('add-adj-card').classList.remove('hidden')">
+                    {% trans "Create an adjustment" %}
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+async function createAdjustment() {
+    const form = new FormData();
+    form.append('staff_id', document.getElementById('adj-staff-id').value);
+    form.append('adjustment_type', document.getElementById('adj-type').value);
+    form.append('amount', document.getElementById('adj-amount').value);
+    form.append('adjustment_date', document.getElementById('adj-date').value);
+    form.append('reason', document.getElementById('adj-reason').value);
+    try {
+        const response = await fetch('{% url "commissions:adjustment_add" %}', {
+            method: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            body: form
+        });
+        const data = await response.json();
+        if (data.success) {
+            htmx.ajax('GET', '{% url "commissions:adjustment_list" %}', {target: '#main-content-area', pushUrl: true});
+        } else {
+            alert(JSON.stringify(data.errors) || '{% trans "Error creating adjustment" %}');
+        }
+    } catch (e) { console.error(e); }
+}
+</script>

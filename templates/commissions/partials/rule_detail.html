@@ -1,0 +1,215 @@
+{% load i18n djicons %}
+
+<div class="p-4">
+    <!-- Back Button -->
+    <button type="button" class="btn btn-ghost mb-3"
+        hx-get="{% url 'commissions:rule_list' %}"
+        hx-target="#main-content-area"
+        hx-push-url="true">
+        {% icon "arrow-back-outline" css_class="mr-1" %}
+        {% trans "Back to Rules" %}
+    </button>
+
+    <!-- Header Card -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                        {% icon "options-outline" css_class="text-2xl text-primary" %}
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold">{{ rule.name }}</h2>
+                        <span class="text-muted">{{ rule.get_rule_type_display }}</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="badge color-{% if rule.is_active %}success{% else %}medium{% endif %}">
+                        {% if rule.is_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            {% if rule.description %}
+            <p class="text-muted mb-4">{{ rule.description }}</p>
+            {% endif %}
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="p-3 rounded-lg bg-base-100">
+                    <div class="text-xs text-muted uppercase font-semibold mb-1">{% trans "Type" %}</div>
+                    <div class="text-lg font-semibold">{{ rule.get_rule_type_display }}</div>
+                </div>
+                <div class="p-3 rounded-lg bg-base-100">
+                    <div class="text-xs text-muted uppercase font-semibold mb-1">{% trans "Rate" %}</div>
+                    <div class="text-lg font-semibold">
+                        {% if rule.rule_type == 'flat' %}${{ rule.rate|floatformat:2 }}{% else %}{{ rule.rate }}%{% endif %}
+                    </div>
+                </div>
+                <div class="p-3 rounded-lg bg-base-100">
+                    <div class="text-xs text-muted uppercase font-semibold mb-1">{% trans "Priority" %}</div>
+                    <div class="text-lg font-semibold">{{ rule.priority }}</div>
+                </div>
+                <div class="p-3 rounded-lg bg-base-100">
+                    <div class="text-xs text-muted uppercase font-semibold mb-1">{% trans "Transactions" %}</div>
+                    <div class="text-lg font-semibold">{{ transaction_count }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Applicability & Dates -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">{% trans "Applicability" %}</h3>
+        </div>
+        <div class="card-body p-0">
+            <div class="list">
+                {% if rule.staff %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Staff Member" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ rule.staff }}</div>
+                </div>
+                {% endif %}
+                {% if rule.service %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Service" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ rule.service }}</div>
+                </div>
+                {% endif %}
+                {% if rule.category %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Category" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ rule.category }}</div>
+                </div>
+                {% endif %}
+                {% if rule.product %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Product" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ rule.product }}</div>
+                </div>
+                {% endif %}
+                {% if not rule.staff and not rule.service and not rule.category and not rule.product %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Scope" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{% trans "Global (applies to all)" %}</div>
+                </div>
+                {% endif %}
+                {% if rule.effective_from %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Effective From" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ rule.effective_from|date:"d/m/Y" }}</div>
+                </div>
+                {% endif %}
+                {% if rule.effective_until %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Effective Until" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{{ rule.effective_until|date:"d/m/Y" }}</div>
+                </div>
+                {% endif %}
+                {% if not rule.effective_from and not rule.effective_until %}
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <div class="list-item-label">{% trans "Date Range" %}</div>
+                    </div>
+                    <div class="list-item-end text-muted">{% trans "No date restriction" %}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="grid grid-cols-2 gap-3 mb-4">
+        <button type="button" class="btn btn--{% if rule.is_active %}warning{% else %}success{% endif %} btn-outline w-full"
+                onclick="toggleRule()">
+            {% if rule.is_active %}
+                {% icon "pause-outline" css_class="mr-1" %}
+                {% trans "Deactivate" %}
+            {% else %}
+                {% icon "play-outline" css_class="mr-1" %}
+                {% trans "Activate" %}
+            {% endif %}
+        </button>
+        <button type="button" class="btn btn-outline color-primary w-full"
+                onclick="editRule()">
+            {% icon "create-outline" css_class="mr-1" %}
+            {% trans "Edit" %}
+        </button>
+    </div>
+
+    <!-- Danger Zone -->
+    {% if transaction_count == 0 %}
+    <div class="card" style="border-color: var(--color-error)">
+        <div class="card-header">
+            <h3 class="card-title text-error">{% trans "Danger Zone" %}</h3>
+        </div>
+        <div class="card-body">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h4 class="font-semibold">{% trans "Delete Rule" %}</h4>
+                    <p class="text-sm text-muted">{% trans "This action cannot be undone" %}</p>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline color-error"
+                        onclick="deleteRule()">
+                    {% icon "trash-outline" css_class="mr-1" %}
+                    {% trans "Delete" %}
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+async function toggleRule() {
+    try {
+        const response = await fetch('{% url "commissions:rule_toggle" rule.id %}', {
+            method: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}'}
+        });
+        const data = await response.json();
+        if (data.success) {
+            htmx.ajax('GET', '{% url "commissions:rule_detail" rule.id %}', {target: '#main-content-area', pushUrl: true});
+        } else {
+            alert(data.error || '{% trans "Error toggling rule" %}');
+        }
+    } catch (e) { console.error(e); }
+}
+
+function editRule() {
+    // TODO: Implement edit form or navigate to edit view
+    alert('{% trans "Edit functionality coming soon" %}');
+}
+
+async function deleteRule() {
+    if (!confirm('{% trans "Are you sure you want to delete this rule?" %}')) return;
+    try {
+        const response = await fetch('{% url "commissions:rule_delete" rule.id %}', {
+            method: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}'}
+        });
+        const data = await response.json();
+        if (data.success) {
+            htmx.ajax('GET', '{% url "commissions:rule_list" %}', {target: '#main-content-area', pushUrl: true});
+        } else {
+            alert(data.error || '{% trans "Error deleting rule" %}');
+        }
+    } catch (e) { console.error(e); }
+}
+</script>

@@ -1,0 +1,139 @@
+{% load i18n djicons %}
+
+<div class="p-4">
+    <!-- Page Header -->
+    <div class="flex justify-between items-center mb-4">
+        <div>
+            <h1 class="text-2xl font-bold">{% trans "Payouts" %}</h1>
+            <p class="text-sm text-muted mt-1">{% trans "Commission payout batches" %}</p>
+        </div>
+        <button type="button" class="btn color-primary"
+                onclick="document.getElementById('create-payout-card').classList.toggle('hidden')">
+            {% icon "add-outline" css_class="mr-1" %}
+            {% trans "New Payout" %}
+        </button>
+    </div>
+
+    <!-- Create Payout Form (hidden by default) -->
+    <div id="create-payout-card" class="card mb-4 hidden">
+        <div class="card-header">
+            <h3 class="card-title">{% icon "add-circle-outline" css_class="text-primary" %} {% trans "Create Payout" %}</h3>
+        </div>
+        <div class="card-body">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="form-group-label mb-1">{% trans "Staff Member" %}</label>
+                    <input type="text" id="payout-staff-id" class="input" placeholder="{% trans 'Staff ID' %}">
+                </div>
+                <div></div>
+                <div>
+                    <label class="form-group-label mb-1">{% trans "Period Start" %}</label>
+                    <input type="date" id="payout-period-start" class="input">
+                </div>
+                <div>
+                    <label class="form-group-label mb-1">{% trans "Period End" %}</label>
+                    <input type="date" id="payout-period-end" class="input">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-group-label mb-1">{% trans "Notes" %}</label>
+                <textarea id="payout-notes" class="textarea" rows="2"></textarea>
+            </div>
+            <div class="flex gap-2">
+                <button type="button" class="btn color-primary" onclick="createPayout()">
+                    {% icon "checkmark-outline" css_class="mr-1" %}
+                    {% trans "Create" %}
+                </button>
+                <button type="button" class="btn btn-ghost"
+                        onclick="document.getElementById('create-payout-card').classList.add('hidden')">
+                    {% trans "Cancel" %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <select name="status" class="select"
+                hx-get="{% url 'commissions:payout_list' %}"
+                hx-trigger="change"
+                hx-target="#main-content-area"
+                hx-push-url="true">
+                <option value="">{% trans "All status" %}</option>
+                <option value="draft" {% if status_filter == 'draft' %}selected{% endif %}>{% trans "Draft" %}</option>
+                <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>{% trans "Pending" %}</option>
+                <option value="approved" {% if status_filter == 'approved' %}selected{% endif %}>{% trans "Approved" %}</option>
+                <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>{% trans "Completed" %}</option>
+                <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>{% trans "Cancelled" %}</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Payout List -->
+    <div class="card">
+        <div class="card-body p-0">
+            {% if payouts %}
+            <div class="list">
+                {% for payout in payouts %}
+                <a hx-get="{% url 'commissions:payout_detail' payout.id %}"
+                   hx-target="#main-content-area"
+                   hx-push-url="true"
+                   class="list-item list-item-clickable">
+                    <div class="list-item-start">
+                        <div class="w-10 h-10 rounded-lg bg-{% if payout.status == 'completed' %}success{% elif payout.status == 'pending' %}warning{% elif payout.status == 'approved' %}primary{% else %}gray{% endif %}/10 flex items-center justify-center">
+                            {% icon "cash-outline" css_class="text-xl text-{% if payout.status == 'completed' %}success{% elif payout.status == 'pending' %}warning{% elif payout.status == 'approved' %}primary{% else %}muted{% endif %}" %}
+                        </div>
+                    </div>
+                    <div class="list-item-content">
+                        <div class="list-item-label">
+                            {{ payout.staff_name }}
+                            <span class="badge badge-sm ml-2 font-mono">{{ payout.reference }}</span>
+                        </div>
+                        <div class="list-item-note">
+                            {{ payout.period_start|date:"d/m/Y" }} - {{ payout.period_end|date:"d/m/Y" }}
+                            &middot; {{ payout.transaction_count }} {% trans "transactions" %}
+                        </div>
+                    </div>
+                    <div class="list-item-end text-right">
+                        <div class="font-semibold">${{ payout.net_amount|floatformat:2 }}</div>
+                        <span class="badge badge-sm color-{% if payout.status == 'completed' %}success{% elif payout.status == 'approved' %}primary{% elif payout.status == 'pending' %}warning{% elif payout.status == 'cancelled' %}error{% else %}medium{% endif %}">
+                            {{ payout.get_status_display }}
+                        </span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12 text-muted">
+                {% icon "cash-outline" css_class="text-5xl block mx-auto mb-2" %}
+                <p class="mt-2">{% trans "No payouts found" %}</p>
+                <p class="text-sm">{% trans "Create a payout to batch approved commissions" %}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+async function createPayout() {
+    const form = new FormData();
+    form.append('staff_id', document.getElementById('payout-staff-id').value);
+    form.append('period_start', document.getElementById('payout-period-start').value);
+    form.append('period_end', document.getElementById('payout-period-end').value);
+    form.append('notes', document.getElementById('payout-notes').value);
+    try {
+        const response = await fetch('{% url "commissions:payout_create" %}', {
+            method: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            body: form
+        });
+        const data = await response.json();
+        if (data.success) {
+            htmx.ajax('GET', '{% url "commissions:payout_list" %}', {target: '#main-content-area', pushUrl: true});
+        } else {
+            alert(data.error || '{% trans "Error creating payout" %}');
+        }
+    } catch (e) { console.error(e); }
+}
+</script>
