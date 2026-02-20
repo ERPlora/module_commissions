@@ -118,7 +118,7 @@
                     {% endfor %}
                 </div>
             </div>
-            <div class="card__footer">
+            <div class="card-footer">
                 <button type="button" class="btn btn-ghost w-full"
                     hx-get="{% url 'commissions:transaction_list' %}"
                     hx-target="#main-content-area"
@@ -160,7 +160,7 @@
                 {% endfor %}
             </div>
         </div>
-        <div class="card__footer">
+        <div class="card-footer">
             <button type="button" class="btn btn-ghost w-full"
                 hx-get="{% url 'commissions:payout_list' %}?status=pending"
                 hx-target="#main-content-area"
