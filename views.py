@@ -8,6 +8,7 @@ from django.db.models import Count, Q, Sum
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
+from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.decorators import login_required
 from apps.core.htmx import htmx_view
@@ -601,7 +602,7 @@ def settings_toggle(request):
     ]
 
     if field not in toggleable:
-        return JsonResponse({'success': False, 'error': 'Invalid field'}, status=400)
+        return JsonResponse({'success': False, 'error': _('Invalid field')}, status=400)
 
     setattr(comm_settings, field, not getattr(comm_settings, field))
     comm_settings.save(update_fields=[field, 'updated_at'])
@@ -624,7 +625,7 @@ def settings_input(request):
     }
 
     if field not in input_fields:
-        return JsonResponse({'success': False, 'error': 'Invalid field'}, status=400)
+        return JsonResponse({'success': False, 'error': _('Invalid field')}, status=400)
 
     try:
         parsed = input_fields[field](value)

@@ -1,0 +1,673 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-24 23:58+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+msgid "Commissions"
+msgstr "Comisiones"
+
+msgid "Select..."
+msgstr "Seleccionar..."
+
+msgid "Cash"
+msgstr "Efectivo"
+
+msgid "Bank Transfer"
+msgstr "Transferencia bancaria"
+
+msgid "Check"
+msgstr "Cheque"
+
+msgid "Added to Payroll"
+msgstr "Añadido a nómina"
+
+msgid "Other"
+msgstr "Otro"
+
+msgid "Gross Sales"
+msgstr "Ventas brutas"
+
+msgid "Net Sales (after discounts)"
+msgstr "Ventas netas (después de descuentos)"
+
+msgid "Profit Margin"
+msgstr "Margen de beneficio"
+
+msgid "Weekly"
+msgstr "Semanal"
+
+msgid "Bi-weekly"
+msgstr "Quincenal"
+
+msgid "Monthly"
+msgstr "Mensual"
+
+msgid "Custom"
+msgstr "Personalizado"
+
+msgid "Default Commission Rate (%)"
+msgstr "Tasa de comisión predeterminada (%)"
+
+msgid "Calculation Basis"
+msgstr "Base de cálculo"
+
+msgid "What the commission percentage is based on"
+msgstr "En qué se basa el porcentaje de comisión"
+
+msgid "Payout Frequency"
+msgstr "Frecuencia de pago"
+
+msgid "Payout Day"
+msgstr "Día de pago"
+
+msgid "Day of month/week for payouts"
+msgstr "Día del mes/semana para pagos"
+
+msgid "Minimum Payout Amount"
+msgstr "Importe mínimo de pago"
+
+msgid "Minimum amount required for payout"
+msgstr "Importe mínimo requerido para pago"
+
+msgid "Apply Tax Withholding"
+msgstr "Aplicar retención fiscal"
+
+msgid "Tax Withholding Rate (%)"
+msgstr "Tasa de retención fiscal (%)"
+
+msgid "Show Commission on Receipt"
+msgstr "Mostrar comisión en el recibo"
+
+msgid "Show Pending Commission to Staff"
+msgstr "Mostrar comisiones pendientes al personal"
+
+msgid "Commissions Settings"
+msgstr "Ajustes de comisiones"
+
+msgid "Flat Amount"
+msgstr "Importe fijo"
+
+msgid "Percentage"
+msgstr "Porcentaje"
+
+msgid "Tiered (based on sales volume)"
+msgstr "Escalonado (basado en volumen de ventas)"
+
+msgid "Rule Name"
+msgstr "Nombre de la regla"
+
+msgid "Description"
+msgstr "Descripción"
+
+msgid "Type"
+msgstr "Tipo"
+
+msgid "Rate"
+msgstr "Tasa"
+
+msgid "Percentage rate or flat amount"
+msgstr "Porcentaje o importe fijo"
+
+msgid "Staff Member"
+msgstr "Miembro del personal"
+
+msgid "Service"
+msgstr "Servicio"
+
+msgid "Category"
+msgstr "Categoría"
+
+msgid "Product"
+msgstr "Producto"
+
+msgid "Tier Thresholds"
+msgstr "Umbrales de niveles"
+
+msgid "List of {min_amount, max_amount, rate} for tiered rules"
+msgstr "Lista de {min_amount, max_amount, rate} para reglas escalonadas"
+
+msgid "Effective From"
+msgstr "Vigente desde"
+
+msgid "Effective Until"
+msgstr "Vigente hasta"
+
+msgid "Priority"
+msgstr "Prioridad"
+
+msgid "Higher priority rules are applied first"
+msgstr "Las reglas de mayor prioridad se aplican primero"
+
+msgid "Active"
+msgstr "Activo"
+
+msgid "Commission Rule"
+msgstr "Regla de comisión"
+
+msgid "Commission Rules"
+msgstr "Reglas de comisión"
+
+msgid "Pending"
+msgstr "Pendiente"
+
+msgid "Approved"
+msgstr "Aprobado"
+
+msgid "Paid"
+msgstr "Pagado"
+
+msgid "Cancelled"
+msgstr "Cancelado"
+
+msgid "Adjusted"
+msgstr "Ajustado"
+
+msgid "Staff Name"
+msgstr "Nombre del personal"
+
+msgid "Sale"
+msgstr "Venta"
+
+msgid "Sale Reference"
+msgstr "Referencia de la venta"
+
+msgid "Appointment"
+msgstr "Cita"
+
+msgid "Sale Amount"
+msgstr "Importe de la venta"
+
+msgid "Commission Rate (%)"
+msgstr "Tasa de comisión (%)"
+
+msgid "Commission Amount"
+msgstr "Importe de comisión"
+
+msgid "Tax Withheld"
+msgstr "Impuesto retenido"
+
+msgid "Net Commission"
+msgstr "Comisión neta"
+
+msgid "Rule"
+msgstr "Regla"
+
+msgid "Status"
+msgstr "Estado"
+
+msgid "Payout"
+msgstr "Pago"
+
+msgid "Transaction Date"
+msgstr "Fecha de la transacción"
+
+msgid "Approved At"
+msgstr "Aprobado el"
+
+msgid "Approved By"
+msgstr "Aprobado por"
+
+msgid "Notes"
+msgstr "Notas"
+
+msgid "Commission Transaction"
+msgstr "Transacción de comisión"
+
+msgid "Commission Transactions"
+msgstr "Transacciones de comisión"
+
+msgid "Draft"
+msgstr "Borrador"
+
+msgid "Pending Approval"
+msgstr "Pendiente de aprobación"
+
+msgid "Processing"
+msgstr "Procesando"
+
+msgid "Completed"
+msgstr "Completado"
+
+msgid "Failed"
+msgstr "Fallido"
+
+msgid "Reference"
+msgstr "Referencia"
+
+msgid "Period Start"
+msgstr "Inicio del período"
+
+msgid "Period End"
+msgstr "Fin del período"
+
+msgid "Gross Amount"
+msgstr "Importe bruto"
+
+msgid "Adjustments"
+msgstr "Ajustes"
+
+msgid "Manual adjustments (positive or negative)"
+msgstr "Ajustes manuales (positivos o negativos)"
+
+msgid "Net Amount"
+msgstr "Importe neto"
+
+msgid "Transaction Count"
+msgstr "Cantidad de transacciones"
+
+msgid "Payment Method"
+msgstr "Método de pago"
+
+msgid "Payment Reference"
+msgstr "Referencia de pago"
+
+msgid "Check number, transfer ID, etc."
+msgstr "Número de cheque, ID de transferencia, etc."
+
+msgid "Paid At"
+msgstr "Pagado el"
+
+msgid "Paid By"
+msgstr "Pagado por"
+
+msgid "Commission Payout"
+msgstr "Pago de comisión"
+
+msgid "Commission Payouts"
+msgstr "Pagos de comisión"
+
+msgid "Bonus"
+msgstr "Bonificación"
+
+msgid "Correction"
+msgstr "Corrección"
+
+msgid "Deduction"
+msgstr "Deducción"
+
+msgid "Refund Adjustment"
+msgstr "Ajuste de reembolso"
+
+msgid "Amount"
+msgstr "Importe"
+
+msgid "Positive for additions, negative for deductions"
+msgstr "Positivo para adiciones, negativo para deducciones"
+
+msgid "Reason"
+msgstr "Motivo"
+
+msgid "Date"
+msgstr "Fecha"
+
+msgid "Created By"
+msgstr "Creado por"
+
+msgid "Commission Adjustment"
+msgstr "Ajuste de comisión"
+
+msgid "Commission Adjustments"
+msgstr "Ajustes de comisión"
+
+msgid "Overview"
+msgstr "Vista general"
+
+msgid "Transactions"
+msgstr "Transacciones"
+
+msgid "Payouts"
+msgstr "Pagos"
+
+msgid "Rules"
+msgstr "Reglas"
+
+msgid "Settings"
+msgstr "Ajustes"
+
+msgid "Back to Adjustments"
+msgstr "Volver a ajustes"
+
+msgid "Details"
+msgstr "Detalles"
+
+msgid "Created"
+msgstr "Creado"
+
+msgid "Linked Payout"
+msgstr "Pago vinculado"
+
+msgid "Danger Zone"
+msgstr "Zona peligrosa"
+
+msgid "Delete Adjustment"
+msgstr "Eliminar ajuste"
+
+msgid "This action cannot be undone"
+msgstr "Esta acción no se puede deshacer"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "Are you sure you want to delete this adjustment?"
+msgstr "¿Estás seguro de que quieres eliminar este ajuste?"
+
+msgid "Error deleting adjustment"
+msgstr "Error al eliminar ajuste"
+
+msgid "Manual commission adjustments, bonuses, and corrections"
+msgstr "Ajustes manuales de comisiones, bonificaciones y correcciones"
+
+msgid "New Adjustment"
+msgstr "Nuevo ajuste"
+
+msgid "Create Adjustment"
+msgstr "Crear ajuste"
+
+msgid "Staff ID"
+msgstr "ID de personal"
+
+msgid "Explain the reason for this adjustment"
+msgstr "Explicar el motivo de este ajuste"
+
+msgid "Create"
+msgstr "Crear"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "All types"
+msgstr "Todos los tipos"
+
+msgid "In Payout"
+msgstr "En pago"
+
+msgid "No adjustments found"
+msgstr "No se encontraron ajustes"
+
+msgid "Create an adjustment"
+msgstr "Crear un ajuste"
+
+msgid "Error creating adjustment"
+msgstr "Error al crear ajuste"
+
+msgid "Total Commission"
+msgstr "Comisión total"
+
+msgid "Top Earners"
+msgstr "Mayores ganancias"
+
+msgid "This month"
+msgstr "Este mes"
+
+msgid "No commission data this month"
+msgstr "Sin datos de comisiones este mes"
+
+msgid "Recent Transactions"
+msgstr "Transacciones recientes"
+
+msgid "No recent transactions"
+msgstr "Sin transacciones recientes"
+
+msgid "View All Transactions"
+msgstr "Ver todas las transacciones"
+
+msgid "Pending Payouts"
+msgstr "Pagos pendientes"
+
+msgid "View All Payouts"
+msgstr "Ver todos los pagos"
+
+msgid "Back to Payouts"
+msgstr "Volver a pagos"
+
+msgid "Period"
+msgstr "Período"
+
+msgid "Included Transactions"
+msgstr "Transacciones incluidas"
+
+msgid "transactions"
+msgstr "transacciones"
+
+msgid "Approve"
+msgstr "Aprobar"
+
+msgid "Process Payment"
+msgstr "Procesar pago"
+
+msgid "Transaction ID, check number, etc."
+msgstr "ID de transacción, número de cheque, etc."
+
+msgid "Mark as Paid"
+msgstr "Marcar como pagado"
+
+msgid "Approve this payout?"
+msgstr "¿Aprobar este pago?"
+
+msgid "Error approving payout"
+msgstr "Error al aprobar pago"
+
+msgid "Reason for cancellation (optional):"
+msgstr "Motivo de cancelación (opcional):"
+
+msgid "Error cancelling payout"
+msgstr "Error al cancelar pago"
+
+msgid "Mark this payout as paid?"
+msgstr "¿Marcar este pago como pagado?"
+
+msgid "Error processing payout"
+msgstr "Error al procesar pago"
+
+msgid "Commission payout batches"
+msgstr "Lotes de pago de comisiones"
+
+msgid "New Payout"
+msgstr "Nuevo pago"
+
+msgid "Create Payout"
+msgstr "Crear pago"
+
+msgid "All status"
+msgstr "Todos los estados"
+
+msgid "No payouts found"
+msgstr "No se encontraron pagos"
+
+msgid "Create a payout to batch approved commissions"
+msgstr "Crear un pago para agrupar comisiones aprobadas"
+
+msgid "Error creating payout"
+msgstr "Error al crear pago"
+
+msgid "Back to Rules"
+msgstr "Volver a reglas"
+
+msgid "Inactive"
+msgstr "Inactivo"
+
+msgid "Applicability"
+msgstr "Aplicabilidad"
+
+msgid "Scope"
+msgstr "Alcance"
+
+msgid "Global (applies to all)"
+msgstr "Global (se aplica a todos)"
+
+msgid "Date Range"
+msgstr "Rango de fechas"
+
+msgid "No date restriction"
+msgstr "Sin restricción de fecha"
+
+msgid "Deactivate"
+msgstr "Desactivar"
+
+msgid "Activate"
+msgstr "Activar"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "Delete Rule"
+msgstr "Eliminar regla"
+
+msgid "Error toggling rule"
+msgstr "Error al cambiar estado de regla"
+
+msgid "Edit functionality coming soon"
+msgstr "Función de edición próximamente"
+
+msgid "Are you sure you want to delete this rule?"
+msgstr "¿Estás seguro de que quieres eliminar esta regla?"
+
+msgid "Error deleting rule"
+msgstr "Error al eliminar regla"
+
+msgid "Define how commissions are calculated"
+msgstr "Definir cómo se calculan las comisiones"
+
+msgid "New Rule"
+msgstr "Nueva regla"
+
+msgid "Create Rule"
+msgstr "Crear regla"
+
+msgid "e.g. Standard Commission"
+msgstr "ej. Comisión estándar"
+
+msgid "Tiered"
+msgstr "Escalonado"
+
+msgid "Rate / Amount"
+msgstr "Tasa / Importe"
+
+msgid "No rules configured"
+msgstr "Sin reglas configuradas"
+
+msgid "Create your first rule"
+msgstr "Crea tu primera regla"
+
+msgid "Error creating rule"
+msgstr "Error al crear regla"
+
+msgid "Commission Defaults"
+msgstr "Valores predeterminados de comisión"
+
+msgid "Default Commission Rate"
+msgstr "Tasa de comisión predeterminada"
+
+msgid "Applied when no specific rule matches"
+msgstr "Aplicado cuando no coincide ninguna regla específica"
+
+msgid "Net Sales"
+msgstr "Ventas netas"
+
+msgid "Payout Settings"
+msgstr "Ajustes de pagos"
+
+msgid "How often commissions are paid out"
+msgstr "Con qué frecuencia se pagan las comisiones"
+
+msgid "Minimum amount required to process a payout"
+msgstr "Importe mínimo requerido para procesar un pago"
+
+msgid "Tax Settings"
+msgstr "Ajustes de impuestos"
+
+msgid "Automatically withhold taxes from commission payments"
+msgstr "Retener automáticamente impuestos de los pagos de comisiones"
+
+msgid "Tax Withholding Rate"
+msgstr "Tasa de retención fiscal"
+
+msgid "Percentage to withhold for taxes"
+msgstr "Porcentaje a retener para impuestos"
+
+msgid "Display Settings"
+msgstr "Ajustes de visualización"
+
+msgid "Display commission info on sales receipts"
+msgstr "Mostrar información de comisiones en los recibos de venta"
+
+msgid "Let staff see their pending commissions"
+msgstr "Permitir al personal ver sus comisiones pendientes"
+
+msgid "Quick Actions"
+msgstr "Acciones rápidas"
+
+msgid "Manage rules for commission calculation"
+msgstr "Gestionar reglas de cálculo de comisiones"
+
+msgid "View and manage commission payouts"
+msgstr "Ver y gestionar pagos de comisiones"
+
+msgid "Manual adjustments and corrections"
+msgstr "Ajustes y correcciones manuales"
+
+msgid "Reset Settings"
+msgstr "Restablecer ajustes"
+
+msgid "Restore all commission settings to their default values."
+msgstr ""
+"Restaurar todos los ajustes de comisiones a sus valores predeterminados."
+
+msgid "Reset to Defaults"
+msgstr "Restablecer valores predeterminados"
+
+msgid "Reset all settings to defaults?"
+msgstr "¿Restablecer todos los ajustes a los valores predeterminados?"
+
+msgid "Back to Transactions"
+msgstr "Volver a transacciones"
+
+msgid "Commission"
+msgstr "Comisión"
+
+msgid "Reject"
+msgstr "Rechazar"
+
+msgid "Approve this commission transaction?"
+msgstr "¿Aprobar esta transacción de comisión?"
+
+msgid "Error approving transaction"
+msgstr "Error al aprobar transacción"
+
+msgid "Reason for rejection (optional):"
+msgstr "Motivo de rechazo (opcional):"
+
+msgid "Error rejecting transaction"
+msgstr "Error al rechazar transacción"
+
+msgid "Commission transactions for all staff"
+msgstr "Transacciones de comisiones de todo el personal"
+
+msgid "Search by staff, reference..."
+msgstr "Buscar por personal, referencia..."
+
+msgid "No transactions found"
+msgstr "No se encontraron transacciones"
+
+msgid "Commission transactions will appear here as sales are processed"
+msgstr ""
+"Las transacciones de comisiones aparecerán aquí a medida que se procesen las"
+" ventas"
+
+msgid "Invalid field"
+msgstr "Campo inválido"
