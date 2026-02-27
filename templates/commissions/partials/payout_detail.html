@@ -1,15 +1,7 @@
 {% load djicons i18n djicons djicons %}
+<div data-back-url="{% url 'commissions:payout_list' %}" hidden></div>
 
 <div class="p-4">
-    <!-- Back Button -->
-    <button type="button" class="btn btn-ghost mb-3"
-        hx-get="{% url 'commissions:payout_list' %}"
-        hx-target="#main-content-area"
-        hx-push-url="true">
-        {% icon "arrow-back-outline" css_class="mr-1" %}
-        {% trans "Back to Payouts" %}
-    </button>
-
     <!-- Header Card -->
     <div class="card mb-4">
         <div class="card-header">
@@ -229,7 +221,7 @@ async function approvePayout() {
         if (data.success) {
             htmx.ajax('GET', '{% url "commissions:payout_detail" payout.id %}', {target: '#main-content-area', pushUrl: true});
         } else {
-            alert(data.error || '{% trans "Error approving payout" %}');
+            showToast(data.error || '{% trans "Error approving payout" %}', 'error');
         }
     } catch (e) { console.error(e); }
 }
@@ -249,7 +241,7 @@ async function cancelPayout() {
         if (data.success) {
             htmx.ajax('GET', '{% url "commissions:payout_detail" payout.id %}', {target: '#main-content-area', pushUrl: true});
         } else {
-            alert(data.error || '{% trans "Error cancelling payout" %}');
+            showToast(data.error || '{% trans "Error cancelling payout" %}', 'error');
         }
     } catch (e) { console.error(e); }
 }
@@ -269,7 +261,7 @@ async function processPayout() {
         if (data.success) {
             htmx.ajax('GET', '{% url "commissions:payout_detail" payout.id %}', {target: '#main-content-area', pushUrl: true});
         } else {
-            alert(data.error || '{% trans "Error processing payout" %}');
+            showToast(data.error || '{% trans "Error processing payout" %}', 'error');
         }
     } catch (e) { console.error(e); }
 }

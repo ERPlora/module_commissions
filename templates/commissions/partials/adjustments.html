@@ -148,7 +148,7 @@ async function createAdjustment() {
         if (data.success) {
             htmx.ajax('GET', '{% url "commissions:adjustment_list" %}', {target: '#main-content-area', pushUrl: true});
         } else {
-            alert(JSON.stringify(data.errors) || '{% trans "Error creating adjustment" %}');
+            showToast(data.errors ? Object.values(data.errors).flat().join(', ') : '{% trans "Error creating adjustment" %}', 'error');
         }
     } catch (e) { console.error(e); }
 }

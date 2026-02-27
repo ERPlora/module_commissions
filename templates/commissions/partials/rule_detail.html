@@ -1,15 +1,7 @@
 {% load djicons i18n djicons djicons %}
+<div data-back-url="{% url 'commissions:rule_list' %}" hidden></div>
 
 <div class="p-4">
-    <!-- Back Button -->
-    <button type="button" class="btn btn-ghost mb-3"
-        hx-get="{% url 'commissions:rule_list' %}"
-        hx-target="#main-content-area"
-        hx-push-url="true">
-        {% icon "arrow-back-outline" css_class="mr-1" %}
-        {% trans "Back to Rules" %}
-    </button>
-
     <!-- Header Card -->
     <div class="card mb-4">
         <div class="card-header">
@@ -187,14 +179,14 @@ async function toggleRule() {
         if (data.success) {
             htmx.ajax('GET', '{% url "commissions:rule_detail" rule.id %}', {target: '#main-content-area', pushUrl: true});
         } else {
-            alert(data.error || '{% trans "Error toggling rule" %}');
+            showToast(data.error || '{% trans "Error toggling rule" %}', 'error');
         }
     } catch (e) { console.error(e); }
 }
 
 function editRule() {
     // TODO: Implement edit form or navigate to edit view
-    alert('{% trans "Edit functionality coming soon" %}');
+    showToast('{% trans "Edit functionality coming soon" %}', 'info');
 }
 
 async function deleteRule() {
@@ -208,7 +200,7 @@ async function deleteRule() {
         if (data.success) {
             htmx.ajax('GET', '{% url "commissions:rule_list" %}', {target: '#main-content-area', pushUrl: true});
         } else {
-            alert(data.error || '{% trans "Error deleting rule" %}');
+            showToast(data.error || '{% trans "Error deleting rule" %}', 'error');
         }
     } catch (e) { console.error(e); }
 }

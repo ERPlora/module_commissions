@@ -132,7 +132,7 @@ async function createPayout() {
         if (data.success) {
             htmx.ajax('GET', '{% url "commissions:payout_list" %}', {target: '#main-content-area', pushUrl: true});
         } else {
-            alert(data.error || '{% trans "Error creating payout" %}');
+            showToast(data.error || '{% trans "Error creating payout" %}', 'error');
         }
     } catch (e) { console.error(e); }
 }

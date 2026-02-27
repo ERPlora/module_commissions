@@ -1,15 +1,7 @@
 {% load djicons i18n djicons djicons %}
+<div data-back-url="{% url 'commissions:transaction_list' %}" hidden></div>
 
 <div class="p-4">
-    <!-- Back Button -->
-    <button type="button" class="btn btn-ghost mb-3"
-        hx-get="{% url 'commissions:transaction_list' %}"
-        hx-target="#main-content-area"
-        hx-push-url="true">
-        {% icon "arrow-back-outline" css_class="mr-1" %}
-        {% trans "Back to Transactions" %}
-    </button>
-
     <!-- Header Card -->
     <div class="card mb-4">
         <div class="card-header">
@@ -151,7 +143,7 @@
             if (data.success) {
                 htmx.ajax('GET', '{% url "commissions:transaction_detail" transaction.id %}', {target: '#main-content-area', pushUrl: true});
             } else {
-                alert(data.error || '{% trans "Error approving transaction" %}');
+                showToast(data.error || '{% trans "Error approving transaction" %}', 'error');
             }
         } catch (e) { console.error(e); }
     }
@@ -171,7 +163,7 @@
             if (data.success) {
                 htmx.ajax('GET', '{% url "commissions:transaction_detail" transaction.id %}', {target: '#main-content-area', pushUrl: true});
             } else {
-                alert(data.error || '{% trans "Error rejecting transaction" %}');
+                showToast(data.error || '{% trans "Error rejecting transaction" %}', 'error');
             }
         } catch (e) { console.error(e); }
     }

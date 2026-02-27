@@ -1,15 +1,7 @@
 {% load djicons i18n djicons djicons %}
+<div data-back-url="{% url 'commissions:adjustment_list' %}" hidden></div>
 
 <div class="p-4">
-    <!-- Back Button -->
-    <button type="button" class="btn btn-ghost mb-3"
-        hx-get="{% url 'commissions:adjustment_list' %}"
-        hx-target="#main-content-area"
-        hx-push-url="true">
-        {% icon "arrow-back-outline" css_class="mr-1" %}
-        {% trans "Back to Adjustments" %}
-    </button>
-
     <!-- Header Card -->
     <div class="card mb-4">
         <div class="card-header">
@@ -129,7 +121,7 @@ async function deleteAdjustment() {
         if (data.success) {
             htmx.ajax('GET', '{% url "commissions:adjustment_list" %}', {target: '#main-content-area', pushUrl: true});
         } else {
-            alert(data.error || '{% trans "Error deleting adjustment" %}');
+            showToast(data.error || '{% trans "Error deleting adjustment" %}', 'error');
         }
     } catch (e) { console.error(e); }
 }

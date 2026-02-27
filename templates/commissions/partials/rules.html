@@ -125,7 +125,7 @@ async function createRule() {
         if (data.success) {
             htmx.ajax('GET', '{% url "commissions:rule_list" %}', {target: '#main-content-area', pushUrl: true});
         } else {
-            alert(JSON.stringify(data.errors) || '{% trans "Error creating rule" %}');
+            showToast(data.errors ? Object.values(data.errors).flat().join(', ') : '{% trans "Error creating rule" %}', 'error');
         }
     } catch (e) { console.error(e); }
 }
