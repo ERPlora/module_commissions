@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 from django.utils.translation import gettext_lazy as _
 
-from apps.accounts.decorators import login_required
+from apps.accounts.decorators import login_required, permission_required
 from apps.core.htmx import htmx_view
 from apps.modules_runtime.navigation import with_module_nav
 
@@ -569,6 +569,7 @@ def adjustment_delete(request, pk):
 # =============================================================================
 
 @login_required
+@permission_required('commissions.manage_settings')
 @with_module_nav('commissions', 'settings')
 @htmx_view('commissions/pages/settings.html', 'commissions/partials/settings.html')
 def settings(request):
@@ -579,6 +580,7 @@ def settings(request):
 
 
 @login_required
+@permission_required('commissions.manage_settings')
 @require_POST
 def settings_save(request):
     hub = _hub(request)
@@ -591,6 +593,7 @@ def settings_save(request):
 
 
 @login_required
+@permission_required('commissions.manage_settings')
 @require_POST
 def settings_toggle(request):
     hub = _hub(request)
