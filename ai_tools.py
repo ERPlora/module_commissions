@@ -75,3 +75,37 @@ class ListCommissionRules(AssistantTool):
                 for r in rules
             ]
         }
+
+
+@register_tool
+class CreateCommissionRule(AssistantTool):
+    name = "create_commission_rule"
+    description = "Create a commission rule (e.g., '10% on all sales', '5% on services')."
+    module_id = "commissions"
+    required_permission = "commissions.add_commissionrule"
+    requires_confirmation = True
+    parameters = {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string", "description": "Rule name"},
+            "rule_type": {"type": "string", "description": "Rule type"},
+            "rate": {"type": "string", "description": "Commission rate percentage"},
+            "effective_from": {"type": "string", "description": "Start date (YYYY-MM-DD)"},
+            "effective_until": {"type": "string", "description": "End date (YYYY-MM-DD)"},
+            "priority": {"type": "integer", "description": "Priority order (lower = higher priority)"},
+        },
+        "required": ["name", "rate"],
+        "additionalProperties": False,
+    }
+
+    def execute(self, args, request):
+        from decimal import Decimal
+        from commissions.models import CommissionRule
+        r = CommissionRule.objects.create(
+            name=args['name'], rule_type=args.get('rule_type', ''),
+            rate=Decimal(args['rate']),
+            effective_from=args.get('effective_from'),
+            effective_until=args.get('effective_until'),
+            priority=args.get('priority', 10),
+        )
+        return {"id": str(r.id), "name": r.name, "rate": str(r.rate), "created": True}
